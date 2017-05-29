@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Foodsy</string>
+
+    <!-- Module login -->
+    <string name="sign_up">ĐĂNG KÝ</string>
+    <string name="sign_in">ĐĂNG NHẬP</string>
+    <string name="sign_in_facebook">Đăng nhập Facebook</string>
+    <string name="sign_in_phone">Đăng nhập Số Điện Thoại</string>
+    <string name="or">Hoặc</string>
+    <string name="register">ĐĂNG KÝ</string>
+    <string name="email">Địa chỉ Email</string>
+    <string name="password">Mật khẩu</string>
+    <string name="confirm_password">Xác nhận mật khẩu</string>
+    <string name="display_name">Tên hiển thị</string>
+    <string name="forget_password">Quên mật khẩu? Click here</string>
+    <string name="forget_password1">QUÊN MẬT KHẨU</string>
+    <string name="forget_password2">Nhập Email của bạn bên dưới để thay đổi mật khẩu mới</string>
+    <string name="forget_password3">Gửi mật khẩu</string>
+
+    <!-- Menu Activity -->
+    <string name="search_location">Tìm kiếm quán ăn, nhà hàng,..</string>
+    <string name="menu_location">Hồ Chí Minh</string>
+    <string name="eat">Ăn gì?</string>
+    <string name="drink">Uống gì?</string>
+    <string name="relax">Giải trí</string>
+    <string name="bookmark">Đánh dấu</string>
+    <!--Account kit-->
+    <string name="FACEBOOK_APP_ID">258079781266199</string>
+    <string name="ACCOUNT_KIT_CLIENT_TOKEN">f4b2Minh60c7fa4fe7d39d027a62785645e0</string>
+    <string name="title_activity_home">HomeActivity</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!--Home Activity-->
+    <string name="title_home">Trang chủ</string>
+    <string name="title_search">Tìm kiếm</string>
+    <string name="title_notifications">Thông báo</string>
+    <string name="title_maps">Địa điểm</string>
+    <!--HomeFragment-->
+    <string name="name_restaurant">The Coffee House</string>
+    <string name="name_food">Coffee Capuchino</string>
+</resources>

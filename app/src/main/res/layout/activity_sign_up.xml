@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context="com.linhnv.foodsy.SignUpActivity">
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guidel7"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline2"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.10" />
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline3"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.90" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline10"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.15" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline11"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.26" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline12"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.37" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline13"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.48" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline14"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.59" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline15"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.60" />
+    <LinearLayout
+        android:id="@+id/linear1"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/margin_16dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginRight="@dimen/margin_0dp"
+        android:gravity="center">
+        <ImageView
+            android:id="@+id/imgCloseSignUp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@drawable/back"
+            android:layout_marginLeft="@dimen/margin_16dp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:text="@string/register"
+            android:gravity="center"
+            android:layout_marginRight="46dp"
+            android:textSize="@dimen/text_size_19dip"
+            android:textStyle="bold"/>
+    </LinearLayout>
+
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline6"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.70" />
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline8"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.95" />
+    <EditText
+        android:id="@+id/edtEmail_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline10"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:layout_marginRight="@dimen/margin_0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline11"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        android:hint="@string/email"
+        android:gravity="center"
+        android:background="@drawable/textview_ui1"
+        app:layout_constraintHorizontal_bias="0.0" />
+
+    <EditText
+        android:id="@+id/edtPass_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline11"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:layout_marginRight="@dimen/margin_0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline12"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        android:hint="@string/password"
+        android:gravity="center"
+        android:background="@drawable/textview_ui1"/>
+    <EditText
+        android:id="@+id/edtConfirmPass_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline12"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:layout_marginRight="@dimen/margin_0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline13"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        android:hint="@string/confirm_password"
+        android:gravity="center"
+        android:background="@drawable/textview_ui1"/>
+    <EditText
+        android:id="@+id/edtDisplayName_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/guideline13"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:layout_marginRight="@dimen/margin_0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline14"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        android:hint="@string/display_name"
+        android:gravity="center"
+        android:background="@drawable/textview_ui1"/>
+
+
+
+    <Button
+        android:id="@+id/btnSignUp_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        app:layout_constraintTop_toBottomOf="@id/guideline15"
+        android:layout_marginTop="@dimen/margin_8dp"
+        android:text="@string/sign_up"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:layout_marginRight="@dimen/margin_0dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline6"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        android:background="@drawable/bg_button_selected1"
+        android:textColor="@color/colorWhite"/>
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/guideline6"
+        app:layout_constraintBottom_toBottomOf="@id/guideline5"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:layout_marginRight="@dimen/margin_0dp"
+        android:text="@string/or"
+        android:gravity="center"/>
+    <android.support.constraint.Guideline
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/guideline5"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7496206" />
+
+    <Button
+        android:id="@+id/btnLoginFB_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/guideline5"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintBottom_toBottomOf="@id/guidel7"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:text="@string/sign_in_facebook"
+        android:background="@drawable/bg_button_selected3"
+        android:textColor="@color/colorWhite"/>
+
+    <Button
+        android:id="@+id/btnLoginPhone_signup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/guidel7"
+        android:layout_marginTop="@dimen/margin_8dp"
+        app:layout_constraintBottom_toBottomOf="@id/guideline8"
+        android:layout_marginBottom="@dimen/margin_8dp"
+        app:layout_constraintLeft_toLeftOf="@id/guideline2"
+        android:layout_marginLeft="@dimen/margin_0dp"
+        app:layout_constraintRight_toRightOf="@id/guideline3"
+        android:text="@string/sign_in_phone"
+        android:background="@drawable/bg_button_selected2"
+        android:textColor="@color/colorWhite"/>
+
+
+</android.support.constraint.ConstraintLayout>
