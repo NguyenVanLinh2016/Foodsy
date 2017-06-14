@@ -13,7 +13,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="@dimen/margin_16dp"/>
+        android:layout_marginTop="@dimen/margin_8dp"/>
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -21,7 +21,8 @@
         app:layout_constraintTop_toBottomOf="@id/imgPlace"
         android:layout_marginTop="@dimen/margin_8dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginBottom="@dimen/margin_8dp">
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -44,15 +45,17 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2">
-            <TextView
+            <Button
                 android:id="@+id/txtAgo"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="32dp"
                 android:gravity="center"
                 android:text="Ready in 20 Mins"
-                android:background="@drawable/bg_button4"
+                android:textSize="13dip"
+                android:background="@drawable/bg_button_selected4"
                 android:textColor="@color/colorPrimary"
-                android:layout_marginTop="@dimen/margin_8dp"/>
+                android:layout_marginTop="@dimen/margin_8dp"
+                android:textAllCaps="false"/>
         </FrameLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

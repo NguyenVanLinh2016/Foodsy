@@ -99,7 +99,7 @@
         app:layout_constraintLeft_toLeftOf="@id/guideline2"
         app:layout_constraintRight_toRightOf="@id/guideline6"
         app:layout_constraintBottom_toBottomOf="@id/guideline5"
-        android:background="@drawable/bglogin"
+        android:background="@drawable/bglogin5"
         android:layout_marginTop="@dimen/margin_8dp"
         android:layout_marginBottom="@dimen/margin_4dp"
         android:layout_marginRight="@dimen/margin_4dp"
@@ -110,7 +110,6 @@
             android:gravity="center"
             android:text="@string/eat"
             android:textColor="@color/colorWhite"
-            android:fontFamily="cursive"
             android:textSize="30dip"/>
     </FrameLayout>
     <FrameLayout
@@ -120,7 +119,7 @@
         app:layout_constraintRight_toRightOf="@id/guideline3"
         app:layout_constraintLeft_toRightOf="@id/guideline6"
         app:layout_constraintBottom_toBottomOf="@id/guideline5"
-        android:background="@drawable/bglogin"
+        android:background="@drawable/bglogin5"
         android:layout_marginTop="@dimen/margin_8dp"
         android:layout_marginBottom="@dimen/margin_4dp"
         android:layout_marginLeft="@dimen/margin_4dp">
@@ -130,7 +129,6 @@
             android:gravity="center"
             android:text="@string/drink"
             android:textColor="@color/colorWhite"
-            android:fontFamily="cursive"
             android:textSize="30dip"/>
     </FrameLayout>
     <FrameLayout
@@ -140,7 +138,7 @@
         app:layout_constraintLeft_toLeftOf="@id/guideline2"
         app:layout_constraintRight_toRightOf="@id/guideline6"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/bglogin"
+        android:background="@drawable/bglogin5"
         android:layout_marginTop="@dimen/margin_4dp"
         android:layout_marginBottom="@dimen/margin_8dp"
         android:layout_marginRight="@dimen/margin_4dp">
@@ -150,7 +148,6 @@
             android:gravity="center"
             android:text="@string/relax"
             android:textColor="@color/colorWhite"
-            android:fontFamily="cursive"
             android:textSize="30dip"/>
     </FrameLayout>
     <FrameLayout
@@ -160,7 +157,7 @@
         app:layout_constraintRight_toRightOf="@id/guideline3"
         app:layout_constraintLeft_toRightOf="@id/guideline6"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@drawable/bglogin"
+        android:background="@drawable/bglogin5"
         android:layout_marginTop="@dimen/margin_4dp"
         android:layout_marginBottom="@dimen/margin_8dp"
         android:layout_marginLeft="@dimen/margin_4dp">
@@ -170,7 +167,6 @@
             android:gravity="center"
             android:text="@string/bookmark"
             android:textColor="@color/colorWhite"
-            android:fontFamily="cursive"
             android:textSize="30dip"/>
     </FrameLayout>
 </android.support.constraint.ConstraintLayout>

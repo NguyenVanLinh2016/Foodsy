@@ -1,13 +1,10 @@
 package com.linhnv.foodsy;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,13 +13,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.linhnv.foodsy.Fragment.HomeFragment;
 import com.linhnv.foodsy.Fragment.MapFragment;
 import com.linhnv.foodsy.Fragment.NotificationFragment;
-import com.linhnv.foodsy.Fragment.SearchFragment;
+import com.linhnv.foodsy.Fragment.BookmarkFragment;
 import com.linhnv.foodsy.Fragment.ViewPagerAdapter;
 
 public class HomeActivity extends AppCompatActivity
@@ -106,7 +101,7 @@ public class HomeActivity extends AppCompatActivity
     private void setupViewPager(ViewPager viewPager){
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFrag(new HomeFragment());
-        viewPagerAdapter.addFrag(new SearchFragment());
+        viewPagerAdapter.addFrag(new BookmarkFragment());
         viewPagerAdapter.addFrag(new NotificationFragment());
         viewPagerAdapter.addFrag(new MapFragment());
         viewPager.setAdapter(viewPagerAdapter);
@@ -125,13 +120,18 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.home, menu);
+        getMenuInflater().inflate(R.menu.menu_search, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        switch (item.getItemId()){
+            case R.id.menu_search:
+                startActivity(new Intent(HomeActivity.this, SearchActivity.class));
+                //finish();
+                break;
+        }
         return super.onOptionsItemSelected(item);
     }
 

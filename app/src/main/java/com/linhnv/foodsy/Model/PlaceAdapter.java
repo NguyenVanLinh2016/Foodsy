@@ -39,7 +39,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         Place place = placeList.get(position);
         holder.txtName_Res.setText(place.getNameRestaurant());
         holder.txtName_Food.setText(place.getNameFood());
-        holder.txtAgo.setText("Cách đây "+ place.getAgo() + "P");
+        holder.txtAgo.setText("Cách đây "+ place.getAgo() + " P");
     }
 
     @Override
@@ -57,6 +57,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             txtName_Res = (TextView) itemView.findViewById(R.id.txtName_Res);
             txtName_Food = (TextView) itemView.findViewById(R.id.txtName_Food);
             txtAgo = (TextView) itemView.findViewById(R.id.txtAgo);
+
         }
     }
 }
