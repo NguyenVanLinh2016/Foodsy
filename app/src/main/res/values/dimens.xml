@@ -9,6 +9,7 @@
 
     <dimen name="margin_64dp">64dp</dimen>
 
+    <dimen name="text_size_15dip">15dip</dimen>
     <dimen name="text_size_19dip">19dip</dimen>
     <dimen name="text_size_46dip">46dip</dimen>
     <dimen name="text_size_60dip">60dip</dimen>
