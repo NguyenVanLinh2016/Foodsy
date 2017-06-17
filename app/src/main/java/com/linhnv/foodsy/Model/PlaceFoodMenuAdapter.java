@@ -53,9 +53,9 @@ public class PlaceFoodMenuAdapter extends RecyclerView.Adapter<PlaceFoodMenuAdap
         public PlaceFoodMenuViewHolder(View itemView) {
             super(itemView);
 
-            txtFoodName = (TextView) itemView.findViewById(R.id.text_view_food_name);
-            txtFoodDescription = (TextView) itemView.findViewById(R.id.text_view_food_decription);
-            txtFoodPrice = (TextView) itemView.findViewById(R.id.text_view_food_price);
+            //txtFoodName = (TextView) itemView.findViewById(R.id.text_view_food_name);
+            //txtFoodDescription = (TextView) itemView.findViewById(R.id.text_view_food_decription);
+            //txtFoodPrice = (TextView) itemView.findViewById(R.id.text_view_food_price);
         }
     }
 }
