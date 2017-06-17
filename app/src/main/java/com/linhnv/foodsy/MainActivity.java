@@ -15,7 +15,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
 
         //test
-        startActivity(new Intent(MainActivity.this, HomeActivity.class));
+        //startActivity(new Intent(MainActivity.this, HomeActivity.class));
 
         anhXa();
         btnSignUp.setOnClickListener(this);
