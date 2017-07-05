@@ -20,9 +20,9 @@ public class NotificationsAdapter {
         public NotificationsViewHolder(View itemView) {
             super(itemView);
 
-            txtDueDate = (TextView) itemView.findViewById(R.id.text_view_dueDate_noti);
-            txtNameRes = (TextView) itemView.findViewById(R.id.text_view_nameRes_noti);
-            txtContent = (TextView) itemView.findViewById(R.id.text_view_content_noti);
+            txtDueDate = (TextView) itemView.findViewById(R.id.text_view_Price);
+            txtNameRes = (TextView) itemView.findViewById(R.id.text_view_nameFood);
+          //  txtContent = (TextView) itemView.findViewById(R.id.text_view_content_noti);
         }
     }
 }

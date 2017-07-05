@@ -20,25 +20,26 @@
             android:src="@drawable/bglogin5"
             android:scaleType="centerCrop"/>
     </FrameLayout>
+
     <TextView
-        android:id="@+id/text_view_dueDate_noti"
+        android:id="@+id/text_view_Price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="13:10"
-        android:textSize="18dip"
+        android:layout_marginRight="0dp"
         android:paddingRight="@dimen/margin_16dp"
+        android:text="59K"
         android:textColor="@color/colorPrimary"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBaseline_toBaselineOf="@+id/text_view_nameRes_noti"
-        android:layout_marginRight="0dp" />
+        android:textSize="18dip"
+        app:layout_constraintBaseline_toBaselineOf="@+id/text_view_nameFood"
+        app:layout_constraintRight_toRightOf="parent" />
     <TextView
-        android:id="@+id/text_view_nameRes_noti"
+        android:id="@+id/text_view_nameFood"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="@string/app_name"
         android:layout_marginLeft="@dimen/margin_16dp"
         app:layout_constraintLeft_toRightOf="@id/frame_item_food"
-        app:layout_constraintRight_toLeftOf="@id/text_view_dueDate_noti"
+        app:layout_constraintRight_toLeftOf="@id/text_view_Price"
         android:textSize="19dip"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="parent"
@@ -47,16 +48,16 @@
         android:maxLines="1"/>
 
     <TextView
-        android:id="@+id/text_view_content_noti"
+        android:id="@+id/text_view_content_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/text_view_nameRes_noti"
-        android:layout_marginTop="@dimen/margin_4dp"
-        app:layout_constraintLeft_toRightOf="@id/frame_item_food"
         android:layout_marginLeft="@dimen/margin_16dp"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginRight="@dimen/margin_16dp"
-        android:textSize="16dip"
+        android:layout_marginTop="@dimen/margin_4dp"
         android:maxLines="2"
-        android:text="adadha akdad a dadadj ad adha ad ad   ad ad aldj ad  ad ajd  adj \" />
+        android:text="adadha akdad a dadadj ad adha ad ad   ad ad aldj ad  ad ajd  adj \"
+        android:textSize="16dip"
+        app:layout_constraintLeft_toRightOf="@id/frame_item_food"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_view_nameFood" />
 </android.support.constraint.ConstraintLayout>

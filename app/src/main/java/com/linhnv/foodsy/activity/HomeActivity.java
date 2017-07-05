@@ -27,6 +27,7 @@ public class HomeActivity extends AppCompatActivity
     private BottomNavigationView bottomNavigation;
     private ViewPager viewPager;
     private MenuItem menuItem;
+    private String url_getEatPlace = "https://foodsyapp.herokuapp.com/api/place/eat";
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -56,7 +57,8 @@ public class HomeActivity extends AppCompatActivity
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.app_name);
         }
-        anhXa();
+        init();
+        int s = getIntent().getExtras().getInt("eat");
 
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //view pager
@@ -95,7 +97,7 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
-    private void anhXa(){
+    private void init(){
         bottomNavigation  = (BottomNavigationView) findViewById(R.id.navigationBottom);
         viewPager = (ViewPager) findViewById(R.id.viewPager1);
     }

@@ -4,7 +4,7 @@
     <!-- Module login -->
     <string name="sign_up">ĐĂNG KÝ</string>
     <string name="sign_in">ĐĂNG NHẬP</string>
-    <string name="sign_in_facebook">Đăng nhập Facebook</string>
+    <string name="sign_in_facebook">ĐĂNG NHẬP FACEBOOK</string>
     <string name="sign_in_phone">Đăng nhập Số Điện Thoại</string>
     <string name="or">Hoặc</string>
     <string name="register">ĐĂNG KÝ</string>
@@ -13,7 +13,7 @@
     <string name="password">Mật khẩu</string>
     <string name="confirm_password">Xác nhận mật khẩu</string>
     <string name="display_name">Tên hiển thị</string>
-    <string name="forget_password">Quên mật khẩu? Click here</string>
+    <string name="forget_password">Quên mật khẩu? Nhấn vào đây</string>
     <string name="forget_password1">QUÊN MẬT KHẨU</string>
     <string name="forget_password2">Nhập Email của bạn bên dưới để thay đổi mật khẩu mới</string>
     <string name="forget_password3">Gửi mật khẩu</string>
@@ -30,7 +30,7 @@
     <string name="ACCOUNT_KIT_CLIENT_TOKEN">f4b260c7fa4fe7d39d027a62785645e0</string>
     <!--Login facebook-->
     <string name="fb_login_protocol_scheme">fb258079781266199</string>
-   <!--Home Activity-->
+    <!--Home Activity-->
     <string name="title_activity_home">HomeActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -73,8 +73,43 @@
     <string name="error_message_confirm">Password chưa trùng</string>
     <string name="error_message_sex">Bạn chưa chọn giới tính</string>
     <string name="error_message_fullname">Bạn chưa nhập tên</string>
+    <string name="error_message_email">Chưa đúng dạng Email!!</string>
 
     <!--menu_takepicture-->
     <string name="choose_image">Chọn ảnh từ máy</string>
     <string name="take_picture">Chụp ảnh</string>
+
+
+    <!--Intro Activity-->
+    <string name="title_activity_welcome">Home Screen</string>
+    <string name="next">NEXT</string>
+    <string name="skip">SKIP</string>
+    <string name="start">GOT IT</string>
+
+    <string name="slide_3_title">Vị trí của bạn</string>
+    <string name="slide_3_desc">Vị trí của bạn sẽ được chia sẽ ngay lập tức!</string>
+
+    <string name="slide_2_title">Giảm giá lớn</string>
+    <string name="slide_2_desc">Giá tốt nhất trong mọi dịch vụ của chúng tôi!</string>
+
+    <string name="slide_1_title">Xin chào!!!</string>
+    <string name="slide_1_desc">Cách dễ nhất để đặt thức ăn từ nhà hàng bạn yêu thích!</string>
+
+    <string name="slide_4_title">World Travel</string>
+    <string name="slide_4_desc">Book tickets of any transportation and travel the world!</string>
+
+    <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
+    <string name="play_again">Play Again</string>
+
+    <!--Sp name-->
+    <string name="preference_name">preference_name</string>
+
+    <!--dialog-->
+    <string name="dialog_title_end_app">Thông báo</string>
+    <string name="dialog_message_end_app">Bạn có muốn thoát khỏi ứng dụng không?</string>
+    <string name="dialog_button_Ok">Đồng ý</string>
+    <string name="dialog_button_Cancel">Bỏ qua</string>
+
+    <string name="dialog_title_update">Thông báo</string>
+    <string name="dialog_message_update">Bạn muốn cập thông tin sau?</string>
 </resources>

@@ -6,9 +6,9 @@ package com.linhnv.foodsy.model;
 
 public class PLaceFoodMenu {
 
-    private String foodName;
-    private String foodDescription;
-    private double price;
+    public String foodName;
+    public String foodDescription;
+    public double price;
     public PLaceFoodMenu(){
 
     }

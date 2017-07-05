@@ -1,12 +1,12 @@
 package com.linhnv.foodsy.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
-import android.nfc.Tag;
 import android.os.AsyncTask;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -35,12 +35,10 @@ import com.facebook.accountkit.ui.LoginType;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.gson.Gson;
 import com.linhnv.foodsy.R;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -49,27 +47,19 @@ import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import es.dmoral.toasty.Toasty;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.linhnv.foodsy.model.PrefManager;
+import com.linhnv.foodsy.model.SP;
 import com.linhnv.foodsy.network.HttpHandler;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
-
-import static android.content.ContentValues.TAG;
 
 
 public class SignInActivity extends BaseActivity implements View.OnClickListener {
@@ -81,14 +71,17 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     public static int APP_REQUEST_CODE = 99;
     private static final String TAG = SignInActivity.class.getSimpleName();
     private int status = 0;
-    private String url_signin = "https://foodsy-api.herokuapp.com/api/auth/login";
-    private String url_signin_social = "https://foodsy-api.herokuapp.com/api/auth/login/social";
-    private String url_get_profile = "https://foodsy-api.herokuapp.com/api/user/profile";
+    private String url_signin = "https://foodsyapp.herokuapp.com/api/auth/login";
+    private String url_signin_social = "https://foodsyapp.herokuapp.com/api/auth/login/social";
+    private String url_get_profile = "https://foodsyapp.herokuapp.com/api/user/profile";
     private String phoneNumberString = "";
     private String token = "";
     //facebook
-    private Button button_login_facebook;
+    private LoginButton button_login_facebook;
     public CallbackManager callbackManager;
+    //sp
+    private SP sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,7 +97,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         btnSignin.setOnClickListener(this);
         button_login_facebook.setOnClickListener(this);
 
-
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "com.example.packagename",
@@ -119,6 +111,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         } catch (NoSuchAlgorithmException e) {
 
         }
+        sp = new SP(this);
     }
 
     private void init(){
@@ -129,6 +122,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         imgCloseSignIn = (ImageView) findViewById(R.id.imgCloseSignIn);
         btnSignInPhone = (Button) findViewById(R.id.btnLoginPhone_signin);
         button_login_facebook = (LoginButton) findViewById(R.id.button_login_facebook);
+        //login facebook
+        button_login_facebook.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+        button_login_facebook.setCompoundDrawablePadding(0);
     }
 
     @Override
@@ -160,29 +156,59 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 break;
             case R.id.button_login_facebook:
                 callbackManager = CallbackManager.Factory.create();
-                LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+                LoginManager.getInstance().registerCallback(callbackManager,
+                        new FacebookCallback<LoginResult>() {
+                            @Override
+                            public void onSuccess(LoginResult loginResult) {
+
+                            }
+
+                            @Override
+                            public void onCancel() {
+                                // App code
+                            }
+
+                            @Override
+                            public void onError(FacebookException exception) {
+                                // App code
+                            }
+                        });
+                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
+                //button_login_facebook.setReadPermissions(Arrays.asList("email", "public_profile", "user_birthday"));
+
+                button_login_facebook.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
                     @Override
                     public void onSuccess(LoginResult loginResult) {
-                        Toast.makeText(SignInActivity.this, "Success: "+ loginResult, Toast.LENGTH_SHORT).show();
+                        GraphRequest mGraphRequest = GraphRequest.newMeRequest(
+                            loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                                @Override
+                                public void onCompleted(JSONObject me, GraphResponse response) {
+                                    if (response.getError() != null) {
+                                        // handle error
+                                        //Toast.makeText(SignInActivity.this, "Login facebook error 12121", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        String username = me.optString("email");
+                                        new SignInSocial().execute(username);
+                                    }
+                                }
+                            });
+                        Bundle parameters = new Bundle();
+                        parameters.putString("fields", "id,name,email,gender, birthday");
+                        mGraphRequest.setParameters(parameters);
+                        mGraphRequest.executeAsync();
                     }
 
                     @Override
                     public void onCancel() {
-                        Toast.makeText(SignInActivity.this, "Fail", Toast.LENGTH_SHORT).show();
+                        Toasty.error(SignInActivity.this, "Login on Cancel", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
                     public void onError(FacebookException error) {
-                        Toast.makeText(SignInActivity.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                        Toasty.error(SignInActivity.this, "Login on Cancel", Toast.LENGTH_SHORT).show();
                     }
                 });
-
-                LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"));
-                //turn off setting button default facebook
-                button_login_facebook.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
-
                 break;
-
         }
     }
     class SignIn extends AsyncTask<String, Void, String>{
@@ -244,7 +270,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                     return sb.toString();
 
                 } else {
-                    return new String("false");
+                    return new String(String.valueOf(responseCode));
                 }
             } catch (Exception e) {
                 return new String("Exception: " + e.getMessage());
@@ -255,7 +281,9 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             hideProgressDialog();
-            if (result != null){
+            if (result.equals("422")){
+                Toasty.error(SignInActivity.this, "Username or password is correct", Toast.LENGTH_SHORT).show();
+            }else{
                 try {
                     JSONObject root = new JSONObject(result);
                     int status = root.getInt("status");
@@ -269,48 +297,84 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            }else{
-                Toasty.success(SignInActivity.this, "Error", Toast.LENGTH_SHORT).show();
             }
         }
     }
-    class SignInSocial extends AsyncTask<String, String, Integer>{
+    class SignInSocial extends AsyncTask<String, Void, String>{
+        HttpHandler httpHandler;
         String username;
-        OkHttpClient client = new OkHttpClient();
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog("Authencation...");
         }
-
         @Override
-        protected Integer doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             username = params[0];
-            //synchronous
-            FormBody.Builder formBuilder = new FormBody.Builder();
-            formBuilder.add("username", username);
-            RequestBody formBody = formBuilder.build();
-            final Request request = new Request.Builder().url(url_signin_social).post(formBody).build();
-            Response response = null;
             try {
-                response = client.newCall(request).execute();
-                return response.code();
-            } catch (IOException e) {
-                e.printStackTrace();
+                httpHandler = new HttpHandler();
+                URL url = new URL(url_signin_social); // here is your URL path
+                JSONObject postDataParams = new JSONObject();
+                postDataParams.put("username", username);
+                Log.e("params", postDataParams.toString());
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(httpHandler.getPostDataString(postDataParams));
+
+                writer.flush();
+                writer.close();
+                os.close();
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+
+                    BufferedReader in = new BufferedReader(new
+                            InputStreamReader(
+                            conn.getInputStream()));
+
+                    StringBuffer sb = new StringBuffer("");
+                    String line = "";
+
+                    while ((line = in.readLine()) != null) {
+
+                        sb.append(line);
+                        break;
+                    }
+
+                    in.close();
+                    return sb.toString();
+
+                } else {
+                    return new String("false");
+                }
+            } catch (Exception e) {
+                return new String("Exception: " + e.getMessage());
             }
-            return null;
         }
 
         @Override
-        protected void onPostExecute(Integer status) {
-            super.onPostExecute(status);
-            hideProgressDialog();
-            if (status == 200){
-                Toasty.success(SignInActivity.this, "Signin successful!!", Toast.LENGTH_SHORT).show();
-                //get token
-
-            }else{
-                Toasty.error(SignInActivity.this, "Signin fail!", Toast.LENGTH_SHORT).show();
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            try {
+                JSONObject root = new JSONObject(result);
+                JSONObject data = root.getJSONObject("data");
+                String token = data.getString("token");
+                new GetUserInfo().execute(token);
+                //if login facebook successful, call method logout because save state in app
+                LoginManager.getInstance().logOut();
+            } catch (JSONException e) {
+                hideProgressDialog();
+                e.printStackTrace();
             }
         }
     }
@@ -330,6 +394,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //account kit
         if (requestCode == APP_REQUEST_CODE){// confirm that this response matches your request
             AccountKitLoginResult loginResult = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
             String toastMessage = "";
@@ -355,13 +420,14 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         if(account.getPhoneNumber()!=null) {
                             Log.e("CountryCode", "" + account.getPhoneNumber().getCountryCode());
                             Log.e("PhoneNumber", "" + account.getPhoneNumber().getPhoneNumber());
-                            //call login get token and then check user
-
-
                             // Get phone number
                             PhoneNumber phoneNumber = account.getPhoneNumber();
                             phoneNumberString = phoneNumber.toString();
-                            sendPhoneNumber(phoneNumberString);
+                            String phone = "0"+ phoneNumberString.substring(3, phoneNumberString.length());
+                            //call login get token and then check user
+                            new SignInSocial().execute(phone);
+                            //save phone in sp
+                            sp.setPhoneNumber(phone);
                             Log.e("NumberString", phoneNumberString);
                         }
 
@@ -377,16 +443,11 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 });
                 toastMessage = "Login successful!!";
             }
-            Toast.makeText(this, toastMessage, Toast.LENGTH_LONG).show();
+            Toasty.success(SignInActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+        }else{
+            //facebook
+            callbackManager.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private void sendPhoneNumber(String phone){
-        Intent intent = new Intent(SignInActivity.this, UpdateInfoActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("phoneNumberString", phone);
-        intent.putExtras(bundle);
-        startActivity(intent);
     }
 
     public class GetUserInfo extends AsyncTask<String, String, String>{
@@ -396,7 +457,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Athencation...");
+            //showProgressDialog("Athencation...");
         }
 
         @Override
@@ -411,31 +472,36 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             hideProgressDialog();
-            if (result != null){
-                try {
-                    JSONObject root = new JSONObject(result);
-                    int status = root.getInt("status");
-                    if (status == 200){
-                        JSONObject jsonObject = root.getJSONObject("data");
-                        String gender = jsonObject.getString("gender");
-                        if (gender.equalsIgnoreCase("n")){
-                            Intent intent = new Intent(SignInActivity.this, UpdateInfoActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putString("token", token);
-                            intent.putExtras(bundle);
-                            startActivity(intent);
-                        }
-
+            try {
+                JSONObject root = new JSONObject(result);
+                int status = root.getInt("status");
+                if (status == 200){
+                    JSONObject jsonObject = root.getJSONObject("data");
+                    String gender = jsonObject.getString("gender");
+                    if (gender.equalsIgnoreCase("n")){
+                        Intent intent = new Intent(SignInActivity.this, UpdateInfoActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("token", token);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                        finish();
                     }else{
-                        Toasty.success(SignInActivity.this, "Error!!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignInActivity.this, MenuActivity.class));
+                        finish();
                     }
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                }else{
+                    Toasty.success(SignInActivity.this, "Error!!", Toast.LENGTH_SHORT).show();
                 }
-            }else{
-                Toasty.success(SignInActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(new Intent(SignInActivity.this, MainActivity.class));
+        finish();
     }
 }

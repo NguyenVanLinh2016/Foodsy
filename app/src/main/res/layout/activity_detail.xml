@@ -11,8 +11,7 @@
     <include
         layout="@layout/toolbar_detail"
         />
-    <include
-        layout="@layout/content_place_detail"
-        />
+
+    <include layout="@layout/content_place_detail" />
 
 </LinearLayout>

@@ -9,7 +9,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linhnv.foodsy.R;
+import com.linhnv.foodsy.activity.PlaceDetailActivity;
 import com.linhnv.foodsy.model.PLaceFoodMenu;
+
+import org.json.JSONArray;
 
 import java.util.List;
 
@@ -22,7 +25,7 @@ public class PlaceFoodMenuAdapter extends RecyclerView.Adapter<PlaceFoodMenuAdap
     private Context mContext;
     private LayoutInflater mLayoutInflater;
 
-    public PlaceFoodMenuAdapter(Context context, List<PLaceFoodMenu> data){
+    public PlaceFoodMenuAdapter(PlaceDetailActivity context, List<PLaceFoodMenu> data){
         this.mContext = context;
         this.mListPlaceFoodMenu = data;
         this.mLayoutInflater = LayoutInflater.from(context);
@@ -54,9 +57,9 @@ public class PlaceFoodMenuAdapter extends RecyclerView.Adapter<PlaceFoodMenuAdap
         public PlaceFoodMenuViewHolder(View itemView) {
             super(itemView);
 
-            //txtFoodName = (TextView) itemView.findViewById(R.id.text_view_food_name);
-            //txtFoodDescription = (TextView) itemView.findViewById(R.id.text_view_food_decription);
-            //txtFoodPrice = (TextView) itemView.findViewById(R.id.text_view_food_price);
+            txtFoodName = (TextView) itemView.findViewById(R.id.text_view_nameFood);
+            txtFoodDescription = (TextView) itemView.findViewById(R.id.text_view_content_name);
+            txtFoodPrice = (TextView) itemView.findViewById(R.id.text_view_Price);
         }
     }
 }
