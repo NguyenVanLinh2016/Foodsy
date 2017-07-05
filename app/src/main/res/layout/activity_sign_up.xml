@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    tools:context="com.linhnv.foodsy.SignUpActivity">
+    tools:context="com.linhnv.foodsy.activity.SignUpActivity">
 
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
@@ -96,10 +96,14 @@
         android:id="@+id/guideline8"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.90" />
+
+
     <EditText
-        android:id="@+id/edtEmail_signup"
+        android:id="@+id/edtUsername_signup"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:hint="@string/username"
+        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/guideline10"
         android:layout_marginTop="@dimen/margin_8dp"
         app:layout_constraintLeft_toLeftOf="@id/guideline2"
@@ -108,10 +112,10 @@
         android:layout_marginRight="@dimen/margin_0dp"
         app:layout_constraintBottom_toBottomOf="@id/guideline11"
         android:layout_marginBottom="@dimen/margin_8dp"
-        android:hint="@string/username"
-        android:gravity="center"
-        android:background="@drawable/textview_ui1"
-        app:layout_constraintHorizontal_bias="0.0" />
+        app:layout_constraintHorizontal_bias="0.0"
+        android:imeOptions="actionNext"
+        android:inputType="textCapWords"
+        android:background="@drawable/textview_ui1"/>
 
     <EditText
         android:id="@+id/edtPass_signup"
@@ -127,7 +131,9 @@
         android:layout_marginBottom="@dimen/margin_8dp"
         android:hint="@string/password"
         android:gravity="center"
-        android:background="@drawable/textview_ui1"/>
+        android:background="@drawable/textview_ui1"
+        android:imeOptions="actionNext"
+        android:inputType="textPassword"/>
     <EditText
         android:id="@+id/edtConfirmPass_signup"
         android:layout_width="0dp"
@@ -142,14 +148,15 @@
         android:layout_marginBottom="@dimen/margin_8dp"
         android:hint="@string/confirm_password"
         android:gravity="center"
-        android:background="@drawable/textview_ui1"/>
+        android:background="@drawable/textview_ui1"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"/>
 
 
     <Button
         android:id="@+id/btnSignUp_signup"
         android:layout_width="0dp"
         android:layout_height="0dp"
-
         app:layout_constraintTop_toBottomOf="@id/guideline15"
         android:layout_marginTop="@dimen/margin_8dp"
         android:text="@string/sign_up"

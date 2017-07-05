@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.linhnv.foodsy.SignInActivity">
+    tools:context="com.linhnv.foodsy.activity.SignInActivity">
     <android.support.constraint.Guideline
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,6 +99,7 @@
             android:textStyle="bold"/>
     </LinearLayout>
     <EditText
+        android:id="@+id/edit_text_username_signin"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@id/guideline3"
@@ -111,9 +112,12 @@
         android:layout_marginBottom="@dimen/margin_8dp"
         android:hint="@string/username"
         android:background="@drawable/textview_ui1"
+        android:imeOptions="actionNext"
+        android:inputType="textCapWords"
         android:gravity="center"/>
 
     <EditText
+        android:id="@+id/edit_text_pass_signin"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toBottomOf="@id/guideline4"
@@ -126,8 +130,11 @@
         android:layout_marginBottom="@dimen/margin_8dp"
         android:hint="@string/password"
         android:background="@drawable/textview_ui1"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:imeOptions="actionDone"
+        android:inputType="textPassword"/>
     <Button
+        android:id="@+id/button_user_signin"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@id/guideline6"
@@ -161,7 +168,8 @@
         app:layout_constraintRight_toRightOf="@id/guideline2"
         android:text="@string/or"
         android:gravity="center"/>
-    <Button
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/button_login_facebook"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="@id/guideline9"
@@ -173,6 +181,8 @@
         android:background="@drawable/bg_button_selected3"
         android:text="@string/sign_in_facebook"
         android:textColor="@color/colorWhite"/>
+
+
     <Button
         android:id="@+id/btnLoginPhone_signin"
         android:layout_width="0dp"
