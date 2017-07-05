@@ -11,6 +11,7 @@ import android.widget.Button;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.SP;
 
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private SP sp;
     private Button btnSignUp, btnSignIn;
