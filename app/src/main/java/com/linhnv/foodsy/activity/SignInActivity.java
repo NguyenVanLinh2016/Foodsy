@@ -180,18 +180,18 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                     @Override
                     public void onSuccess(LoginResult loginResult) {
                         GraphRequest mGraphRequest = GraphRequest.newMeRequest(
-                            loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                                @Override
-                                public void onCompleted(JSONObject me, GraphResponse response) {
-                                    if (response.getError() != null) {
-                                        // handle error
-                                        //Toast.makeText(SignInActivity.this, "Login facebook error 12121", Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        String username = me.optString("email");
-                                        new SignInSocial().execute(username);
+                                loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                                    @Override
+                                    public void onCompleted(JSONObject me, GraphResponse response) {
+                                        if (response.getError() != null) {
+                                            // handle error
+                                            //Toast.makeText(SignInActivity.this, "Login facebook error 12121", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            String username = me.optString("email");
+                                            new SignInSocial().execute(username);
+                                        }
                                     }
-                                }
-                            });
+                                });
                         Bundle parameters = new Bundle();
                         parameters.putString("fields", "id,name,email,gender, birthday");
                         mGraphRequest.setParameters(parameters);
@@ -489,6 +489,8 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                         finish();
                     }else{
                         startActivity(new Intent(SignInActivity.this, MenuActivity.class));
+                        sp.setStateLogin(true);
+                        sp.setToken(token);
                         finish();
                     }
                 }else{

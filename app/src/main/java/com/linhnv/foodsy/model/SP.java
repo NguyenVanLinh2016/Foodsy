@@ -10,13 +10,13 @@ import com.linhnv.foodsy.R;
  * Created by Huu on 28/06/2017.
  */
 
-
 public class SP {
     Context _context;
     private static final String PREFS_FILE = "login";
     private static final int PREFS_MODE = Context.MODE_PRIVATE;
     private static final String KEY_USER = "user";
     private static final String KEY_PHONE = "phonenumber";
+    private static final String KEY_TOKEN = "token";
 
     public SP(Context context) {
         this._context = context;
@@ -44,5 +44,17 @@ public class SP {
     public String getPhoneNumber() {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getString(KEY_PHONE, "");
+    }
+    public void setToken(String value) {
+        SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        SharedPreferences.Editor editor = prefs.edit();
+        // write state login
+        editor.putString(KEY_TOKEN, value);
+        editor.commit();
+    }
+
+    public String getToken() {
+        SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        return user.getString(KEY_TOKEN, "");
     }
 }

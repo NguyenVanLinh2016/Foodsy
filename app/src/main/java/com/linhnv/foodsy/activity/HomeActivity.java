@@ -27,7 +27,6 @@ public class HomeActivity extends AppCompatActivity
     private BottomNavigationView bottomNavigation;
     private ViewPager viewPager;
     private MenuItem menuItem;
-    private String url_getEatPlace = "https://foodsyapp.herokuapp.com/api/place/eat";
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -144,13 +143,13 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_home) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_bookmark) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_location) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_share) {
 

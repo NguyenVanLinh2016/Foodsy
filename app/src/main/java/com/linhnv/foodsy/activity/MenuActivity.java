@@ -60,13 +60,24 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        Intent intent = new Intent(MenuActivity.this, HomeActivity.class);
+        Bundle bundle = new Bundle();
         switch (v.getId()) {
             case R.id.frame_eat:
-                Intent intent = new Intent(MenuActivity.this, HomeActivity.class);
-                Bundle bundle = new Bundle();
                 bundle.putInt("eat", 0);
                 intent.putExtras(bundle);
                 startActivity(intent);
+                break;
+            case R.id.frame_entertaiment:
+                bundle.putInt("eat", 1);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
+            case R.id.frame_drink:
+                bundle.putInt("eat", 2);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
         }
     }
 }

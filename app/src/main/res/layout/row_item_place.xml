@@ -33,13 +33,17 @@
                 android:layout_height="wrap_content"
                 android:text="@string/name_restaurant"
                 android:textStyle="bold"
-                android:textSize="22dip"/>
+                android:textSize="18dip"
+                android:ellipsize="end"
+                android:lines="1"/>
             <TextView
                 android:id="@+id/txtName_Food"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/name_food"
-                android:layout_below="@+id/txtName_Res"/>
+                android:layout_below="@+id/txtName_Res"
+                android:textSize="14dip"
+                android:lines="2"/>
         </RelativeLayout>
         <FrameLayout
             android:layout_width="0dp"

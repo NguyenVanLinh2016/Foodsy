@@ -457,6 +457,8 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         finish();
                     }else{
                         startActivity(new Intent(SignUpActivity.this, MenuActivity.class));
+                        sp.setStateLogin(true);
+                        sp.setToken(token);
                         finish();
                     }
                 }else{

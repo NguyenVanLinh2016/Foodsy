@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.Place;
+import com.linhnv.foodsy.model.Places;
 
 import java.util.List;
 
@@ -19,10 +20,10 @@ import java.util.List;
 
 public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHolder>{
 
-    private List<Place> placeList;
+    private List<Places> placeList;
     private Context context;
     private LayoutInflater layoutInflater;
-    public PlaceAdapter(Context context, List<Place> data){
+    public PlaceAdapter(Context context, List<Places> data){
         this.context = context;
         this.placeList = data;
         this.layoutInflater = LayoutInflater.from(context);
@@ -36,10 +37,10 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
 
     @Override
     public void onBindViewHolder(PlaceViewHolder holder, int position) {
-        Place place = placeList.get(position);
-        holder.txtName_Res.setText(place.getNameRestaurant());
-        holder.txtName_Food.setText(place.getNameFood());
-        holder.txtAgo.setText("Cách đây "+ place.getAgo() + " P");
+        Places place = placeList.get(position);
+        holder.txtName_Res.setText(place.getDisplay_name());
+        holder.txtName_Food.setText(place.getAddress());
+        holder.txtAgo.setText(place.getCity());
     }
 
     @Override
