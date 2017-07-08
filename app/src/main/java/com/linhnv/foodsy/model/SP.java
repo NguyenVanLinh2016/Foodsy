@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.linhnv.foodsy.R;
 
 /**
@@ -16,10 +17,12 @@ public class SP {
     private static final String PREFS_FILE = "login";
     private static final int PREFS_MODE = Context.MODE_PRIVATE;
     private static final String KEY_USER = "user";
+    private static final String PREFS_FILE_USER = "user_info";
     private static final String KEY_PHONE = "phonenumber";
     private static final String KEY_LATITUDE = "longtitude";
     private static final String KEY_LONGITUDE = "longtitude";
     private static final String KEY_TOKEN = "token";
+    private static final String KEY_USER_INFO= "info_user";
 
     public SP(Context context) {
         this._context = context;
@@ -81,5 +84,16 @@ public class SP {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getString(KEY_TOKEN, "");
     }
-
+    public void setUser(String object){
+               SharedPreferences mPreferences = _context.getSharedPreferences(PREFS_FILE_USER, PREFS_MODE);
+               SharedPreferences.Editor preEditor = mPreferences.edit();
+               Gson gson = new Gson();
+               String json = gson.toJson(object);
+               preEditor.putString(KEY_USER_INFO, json);
+               preEditor.commit();
+           }
+    public String getUser(){
+        SharedPreferences user = _context.getSharedPreferences(PREFS_FILE_USER, PREFS_MODE);
+        return user.getString(KEY_USER_INFO, "");
+    }
 }
