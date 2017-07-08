@@ -82,9 +82,9 @@
 
     <!--Intro Activity-->
     <string name="title_activity_welcome">Home Screen</string>
-    <string name="next">NEXT</string>
-    <string name="skip">SKIP</string>
-    <string name="start">GOT IT</string>
+    <string name="next">Tiếp theo</string>
+    <string name="skip">Bỏ qua</string>
+    <string name="start">Xong</string>
 
     <string name="slide_3_title">Vị trí của bạn</string>
     <string name="slide_3_desc">Vị trí của bạn sẽ được chia sẽ ngay lập tức!</string>

@@ -115,7 +115,8 @@ public class HomeFragment extends Fragment {
             HttpHandler sh = new HttpHandler();
 
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_places + "?token=" + token());
+            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude() + "&latitude="
+                    + sp.getLongitude()+ "&token=" + token());
             Log.e(TAG, "Response from url: " + jsonStr);
 
 

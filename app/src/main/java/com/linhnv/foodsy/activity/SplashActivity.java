@@ -48,6 +48,8 @@ public class SplashActivity extends AppCompatActivity{
     @Override
     public void onStart() {
         super.onStart();
+   //     new Handler().postDelayed(new Runnable() {})
+
 
         if (!checkPermissions()) {
             requestPermissions();
@@ -64,12 +66,12 @@ public class SplashActivity extends AppCompatActivity{
                         if (task.isSuccessful() && task.getResult() != null) {
                             mLastLocation = task.getResult();
                             sp.setLocationUser(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                            startActivity(new Intent(SplashActivity.this, MenuActivity.class));
+                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             finish();
                         } else {
                             Log.w(TAG, "Can't get location", task.getException());
                             sp.setLocationUser(0,  0);
-                            startActivity(new Intent(SplashActivity.this, MenuActivity.class));
+                            startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             finish();
                         }
                     }
