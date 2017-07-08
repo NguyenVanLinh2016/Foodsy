@@ -48,9 +48,9 @@ public class HomeFragment extends Fragment {
     private List<Places> placeList;
     private SP sp;
     private String url_places = null;
-    private String url_place_eat = "https://foodsyapp.herokuapp.com/api/place/eat";
-    private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/drink";
-    private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/entertain";
+    private String url_place_eat = "https://foodsyapp.herokuapp.com/api/place/category/eat";
+    private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/category/drink";
+    private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/category/entertain";
     ArrayList<Places> eatList;
 
     private ProgressDialog pDialog;

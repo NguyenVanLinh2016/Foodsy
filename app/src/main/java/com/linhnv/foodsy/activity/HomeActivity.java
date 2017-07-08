@@ -13,6 +13,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.fragment.HomeFragment;
@@ -20,6 +22,7 @@ import com.linhnv.foodsy.fragment.MapFragment;
 import com.linhnv.foodsy.fragment.NotificationFragment;
 import com.linhnv.foodsy.fragment.BookmarkFragment;
 import com.linhnv.foodsy.fragment.ViewPagerAdapter;
+import com.linhnv.foodsy.model.SP;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,10 +30,12 @@ public class HomeActivity extends AppCompatActivity
     private BottomNavigationView bottomNavigation;
     private ViewPager viewPager;
     private MenuItem menuItem;
+    private TextView tv_nameuser, tv_emailuser;
+    private SP sp;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.navigation_home:
                     viewPager.setCurrentItem(0);
                     return true;
@@ -47,12 +52,13 @@ public class HomeActivity extends AppCompatActivity
             return false;
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null){
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.app_name);
         }
@@ -71,9 +77,9 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position) {
                 //khi keo viewpager thi bottom navigation chay theo
-                if(menuItem != null){
+                if (menuItem != null) {
                     menuItem.setChecked(false);
-                }else{
+                } else {
                     bottomNavigation.getMenu().getItem(0).setChecked(false);
                 }
                 bottomNavigation.getMenu().getItem(position).setChecked(true);
@@ -94,13 +100,21 @@ public class HomeActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        sp = new SP(getApplicationContext());
+
+        String user = sp.getUser().toString();
+        Toast.makeText(this, user, Toast.LENGTH_LONG).show();
 
     }
-    private void init(){
-        bottomNavigation  = (BottomNavigationView) findViewById(R.id.navigationBottom);
+
+    private void init() {
+        bottomNavigation = (BottomNavigationView) findViewById(R.id.navigationBottom);
         viewPager = (ViewPager) findViewById(R.id.viewPager1);
+        tv_nameuser = (TextView) findViewById(R.id.txtNameUser);
+        tv_emailuser = (TextView) findViewById(R.id.txtNameUser);
     }
-    private void setupViewPager(ViewPager viewPager){
+
+    private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFrag(new HomeFragment());
         viewPagerAdapter.addFrag(new BookmarkFragment());
@@ -128,7 +142,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_search:
                 startActivity(new Intent(HomeActivity.this, SearchActivity.class));
                 //finish();

@@ -1,5 +1,6 @@
 package com.linhnv.foodsy.activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,9 +23,12 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.linhnv.foodsy.R;
+import com.linhnv.foodsy.model.Places;
+import com.linhnv.foodsy.model.User;
 import com.linhnv.foodsy.network.HttpHandler;
 import com.linhnv.foodsy.model.SP;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -52,9 +56,11 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     private ImageView image_avatar;
     private String token = "";
     private String url_update_info = "https://foodsyapp.herokuapp.com/api/user/update";
+    private String url_user = "https://foodsyapp.herokuapp.com/api/user/profile";
     static final int REQUEST_IMAGE_CAPTURE = 1;
     //sp
     private SP sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,15 +68,22 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
         init();
         //Get Sp
         sp = new SP(this);
-        phoneNumber =  sp.getPhoneNumber();
-        if (phoneNumber.length() > 0){
+        phoneNumber = sp.getPhoneNumber();
+        if (phoneNumber.length() > 0) {
             editText_phone.setText(phoneNumber);
         }
         button_update_info.setOnClickListener(this);
         token = getIntent().getExtras().getString("token");
         sp = new SP(this);
     }
-    private void init(){
+
+    public String token() {
+        sp = new SP(getApplicationContext());
+        String token = sp.getToken();
+        return token;
+    }
+
+    private void init() {
         editText_fullname = (EditText) findViewById(R.id.edit_text_fullname);
         editText_email = (EditText) findViewById(R.id.edit_text_email);
         editText_address = (EditText) findViewById(R.id.edit_text_address);
@@ -85,7 +98,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.button_update_info:
                 int selectId = radio_sex.getCheckedRadioButtonId();
                 RadioButton radioButton = (RadioButton) findViewById(selectId);
@@ -93,29 +106,29 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                 String email = editText_email.getText().toString().trim();
                 String address = editText_address.getText().toString().trim();
                 String phone = editText_phone.getText().toString();
-                if (fullname.length() == 0){
+                if (fullname.length() == 0) {
                     editText_fullname.setError(getString(R.string.error_message_fullname));
                     editText_fullname.requestFocus();
-                }else if (selectId == -1){
+                } else if (selectId == -1) {
                     Toasty.error(UpdateInfoActivity.this, getString(R.string.error_message_sex), Toast.LENGTH_SHORT).show();
-                }else if (email.length() > 0){
-                    if(!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
+                } else if (email.length() > 0) {
+                    if (!EMAIL_ADDRESS_PATTERN.matcher(email).matches()) {
                         Toasty.error(UpdateInfoActivity.this, getString(R.string.error_message_email), Toast.LENGTH_SHORT).show();
                         editText_email.requestFocus();
-                    }else{
+                    } else {
                         String sex = String.valueOf(radioButton.getText());
-                        if(sex.equalsIgnoreCase("Nam")){
+                        if (sex.equalsIgnoreCase("Nam")) {
                             sex = "m";
-                        }else{
+                        } else {
                             sex = "f";
                         }
                         new UpdateUserInfo().execute(token, fullname, email, address, phone, sex);
                     }
-                }else{
+                } else {
                     String sex = String.valueOf(radioButton.getText());
-                    if(sex.equalsIgnoreCase("Nam")){
+                    if (sex.equalsIgnoreCase("Nam")) {
                         sex = "m";
-                    }else{
+                    } else {
                         sex = "f";
                     }
                     new UpdateUserInfo().execute(token, fullname, email, address, phone, sex);
@@ -129,9 +142,11 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                 break;
         }
     }
-    class UpdateUserInfo extends AsyncTask<String, Void, String>{
+
+    class UpdateUserInfo extends AsyncTask<String, Void, String> {
         HttpHandler httpHandler;
         String token, fullname, email, address, phone, sex;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -209,12 +224,13 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
             try {
                 JSONObject root = new JSONObject(result);
                 int status = root.getInt("status");
-                if (status == 200){
+                if (status == 200) {
                     sp.setStateLogin(true);
                     startActivity(new Intent(UpdateInfoActivity.this, MenuActivity.class));
                     finish();
                     Toasty.success(UpdateInfoActivity.this, "Update info successful!", Toast.LENGTH_SHORT).show();
-                }else{
+                    new GetUserInfo().execute();
+                } else {
                     Toasty.success(UpdateInfoActivity.this, "Update fail!", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
@@ -236,6 +252,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     protected void onStart() {
         super.onStart();
     }
+
     public static final Pattern EMAIL_ADDRESS_PATTERN = Pattern.compile(
             "[a-zA-Z0-9\\+\\.\\_\\%\\-\\+]{1,256}" +
                     "\\@" +
@@ -245,6 +262,62 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                     "[a-zA-Z0-9][a-zA-Z0-9\\-]{0,25}" +
                     ")+"
     );
+
+    public class GetUserInfo extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            HttpHandler sh = new HttpHandler();
+
+            // Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(url_user + "?token=" + token.toString());
+            Log.e(TAG, "Response from url: " + jsonStr);
+
+            if (jsonStr != null) {
+                try {
+                    JSONObject jsonObj = new JSONObject(jsonStr);
+
+                    // Getting JSON Array node
+                    JSONArray eat = jsonObj.getJSONArray("data");
+
+                    // looping through All Contacts
+                    sp.setUser(eat.toString());
+                    Toast.makeText(UpdateInfoActivity.this, eat.toString(), Toast.LENGTH_LONG).show();
+
+                } catch (final JSONException e) {
+                    Log.e(TAG, "Json parsing error: " + e.getMessage());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getApplicationContext(),
+                                    "Json parsing error: " + e.getMessage(),
+                                    Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    });
+
+                }
+            } else {
+                Log.e(TAG, "Couldn't get json from server.");
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getApplicationContext(),
+                                "Couldn't get json from server. Check LogCat for possible errors!",
+                                Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+
+            }
+
+            return null;
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -256,6 +329,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
             public void onClick(DialogInterface dialog, int which) {
                 sp.setStateLogin(true);
                 startActivity(new Intent(UpdateInfoActivity.this, MenuActivity.class));
+                new GetUserInfo().execute();
                 finish();
             }
         });
