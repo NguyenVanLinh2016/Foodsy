@@ -81,4 +81,5 @@ public class SP {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getString(KEY_TOKEN, "");
     }
+
 }
