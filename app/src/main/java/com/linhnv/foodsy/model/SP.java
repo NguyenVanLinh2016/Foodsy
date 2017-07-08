@@ -19,6 +19,7 @@ public class SP {
     private static final String KEY_PHONE = "phonenumber";
     private static final String KEY_LATITUDE = "longtitude";
     private static final String KEY_LONGITUDE = "longtitude";
+    private static final String KEY_TOKEN = "token";
 
     public SP(Context context) {
         this._context = context;
@@ -36,30 +37,48 @@ public class SP {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getBoolean(KEY_USER, false);
     }
-    public void setPhoneNumber(String value){
+
+    public void setPhoneNumber(String value) {
         SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         SharedPreferences.Editor editor = prefs.edit();
         // write a phone number
         editor.putString(KEY_PHONE, value);
         editor.commit();
     }
+
     public String getPhoneNumber() {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getString(KEY_PHONE, "");
     }
-    public void setLocationUser(double latitude, double longitude){
+
+    public void setLocationUser(double latitude, double longitude) {
         SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putFloat(KEY_LATITUDE, Float.valueOf(String.valueOf(latitude)));
         editor.putFloat(KEY_LONGITUDE, Float.valueOf(String.valueOf(longitude)));
         editor.commit();
     }
-    public Float getLatitude(){
+
+    public Float getLatitude() {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getFloat(KEY_LATITUDE, 0);
     }
-    public Float getLongitude(){
+
+    public Float getLongitude() {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getFloat(KEY_LONGITUDE, 0);
+    }
+
+    public void setToken(String value) {
+        SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        SharedPreferences.Editor editor = prefs.edit();
+        // write state login
+        editor.putString(KEY_TOKEN, value);
+        editor.commit();
+    }
+
+    public String getToken() {
+        SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        return user.getString(KEY_TOKEN, "");
     }
 }
