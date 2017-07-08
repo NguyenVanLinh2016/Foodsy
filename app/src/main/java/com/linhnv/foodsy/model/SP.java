@@ -17,6 +17,8 @@ public class SP {
     private static final int PREFS_MODE = Context.MODE_PRIVATE;
     private static final String KEY_USER = "user";
     private static final String KEY_PHONE = "phonenumber";
+    private static final String KEY_LATITUDE = "latitude";
+    private static final String KEY_LONGITUDE = "longtitude";
 
     public SP(Context context) {
         this._context = context;
@@ -44,5 +46,20 @@ public class SP {
     public String getPhoneNumber() {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getString(KEY_PHONE, "");
+    }
+    public void setLocationUser(double latitude, double longitude){
+        SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putFloat(KEY_LATITUDE, Float.valueOf(String.valueOf(latitude)));
+        editor.putFloat(KEY_LONGITUDE, Float.valueOf(String.valueOf(longitude)));
+        editor.commit();
+    }
+    public Float getLatitude(){
+        SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        return user.getFloat(KEY_LATITUDE, 0);
+    }
+    public Float getLongitude(){
+        SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        return user.getFloat(KEY_LONGITUDE, 0);
     }
 }
