@@ -55,6 +55,7 @@ public class SplashActivity extends AppCompatActivity{
             getLastLocation();
         }
     }
+
     @SuppressWarnings("MissingPermission")
     private void getLastLocation() {
         mFusedLocationClient.getLastLocation()
