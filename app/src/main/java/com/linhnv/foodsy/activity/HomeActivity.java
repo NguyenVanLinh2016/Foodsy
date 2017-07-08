@@ -1,7 +1,6 @@
 package com.linhnv.foodsy.activity;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -12,42 +11,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.fragment.HomeFragment;
 import com.linhnv.foodsy.fragment.MapFragment;
 import com.linhnv.foodsy.fragment.NotificationFragment;
 import com.linhnv.foodsy.fragment.BookmarkFragment;
 import com.linhnv.foodsy.fragment.ViewPagerAdapter;
-import com.linhnv.foodsy.model.DirectionFinder;
-import com.linhnv.foodsy.model.DirectionFinderListener;
-import com.linhnv.foodsy.model.Route;
-import com.linhnv.foodsy.model.SP;
-
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, DirectionFinderListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     private BottomNavigationView bottomNavigation;
     private ViewPager viewPager;
     private MenuItem menuItem;
-    private SP sp;
     private String url_getEatPlace = "https://foodsyapp.herokuapp.com/api/place/eat";
-    //google map
-    public static final String KEY_MAP_DIRECTION = "https://maps.googleapis.com/maps/api/directions/json?origin=Toronto&destination=Montreal&key=AIzaSyA4H50E2ra5z38IKkMgRU0Ynx8sel5k_A0";
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -78,13 +58,6 @@ public class HomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.app_name);
         }
         init();
-        sp = new SP(this);
-        //Toast.makeText(this, ""+ sp.getLocationUser(), Toast.LENGTH_SHORT).show();
-        String latitude = "";
-        String longtitude = "";
-        sendRequest();
-
-
         int s = getIntent().getExtras().getInt("eat");
 
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -188,37 +161,5 @@ public class HomeActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
-    }
-    //google map
-    private void sendRequest(){
-        String origin = "10.907931, 106.758665";
-        String destination = "10.789620, 106.684137";
-        if(origin.isEmpty()){
-            //check validation
-            return;
-        }else if(destination.isEmpty()){
-            //check validation
-            return;
-        }
-
-        try{
-            new DirectionFinder((DirectionFinderListener) this, origin, destination).execute();
-        }catch (UnsupportedEncodingException e){
-            e.printStackTrace();
-        }
-
-    }
-
-    @Override
-    public void onDirectionFinderStart() {
-
-    }
-
-    @Override
-    public void onDirectionFinderSuccess(List<Route> routes) {
-        for(Route route: routes){
-            Toast.makeText(this, "----"+ route.duration, Toast.LENGTH_SHORT).show();
-            Log.d("TEST", route.duration.text +"--");
-        }
     }
 }

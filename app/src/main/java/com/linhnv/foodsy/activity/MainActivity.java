@@ -7,10 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.SP;
-
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private SP sp;
@@ -26,9 +26,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             startActivity(new Intent(MainActivity.this, MenuActivity.class));
             finish();
         }
-
-        //test
-        //startActivity(new Intent(MainActivity.this, HomeActivity.class));
 
         anhXa();
         btnSignUp.setOnClickListener(this);
