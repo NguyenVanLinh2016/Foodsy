@@ -34,6 +34,7 @@ public class MapFragment extends BaseFragment {
     GoogleMap mGoogleMap;
     private MapView mMapView;
     private SP sp;
+    private boolean flag = true;
 
     @Nullable
     @Override
