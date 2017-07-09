@@ -111,4 +111,5 @@ public class MapActivity extends FragmentActivity implements OnMapReadyCallback,
             polylinePaths.add(mMap.addPolyline(polylineOptions));
         }
     }
+
 }
