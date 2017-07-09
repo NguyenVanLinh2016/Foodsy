@@ -22,8 +22,10 @@ import com.linhnv.foodsy.activity.HomeActivity;
 import com.linhnv.foodsy.activity.MenuActivity;
 import com.linhnv.foodsy.activity.SignInActivity;
 import com.linhnv.foodsy.activity.UpdateInfoActivity;
+import com.linhnv.foodsy.adapter.NotificationsAdapter;
 import com.linhnv.foodsy.adapter.PlaceAdapterShimmer;
 import com.linhnv.foodsy.model.ClickListener;
+import com.linhnv.foodsy.model.DrawsLineItem;
 import com.linhnv.foodsy.model.Place;
 import com.linhnv.foodsy.adapter.PlaceAdapter;
 import com.linhnv.foodsy.model.Places;
@@ -69,9 +71,6 @@ public class HomeFragment extends BaseFragment {
     private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/category/drink";
     private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/category/entertain";
     ArrayList<Places> eatList;
-
-    private ProgressDialog pDialog;
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -105,7 +104,7 @@ public class HomeFragment extends BaseFragment {
         } else if (url_eat == 2) {
             url_places = url_place_drink;
         }
-        Toast.makeText(getActivity(), url_places, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(), url_places, Toast.LENGTH_LONG).show();
         String latitude = String.valueOf(sp.getLatitude());
         String longitude = String.valueOf(sp.getLongitude());
         new GetEatInfo().execute();
@@ -118,112 +117,80 @@ public class HomeFragment extends BaseFragment {
         return token;
     }
 
-    public class GetEatInfo extends AsyncTask<String, Void, Void> {
+    public class GetEatInfo extends AsyncTask<String, Void, String> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Showing progress dialog
-//            pDialog = new ProgressDialog(getActivity());
-//            pDialog.setMessage("Please wait...");
-//            pDialog.setCancelable(false);
-//            pDialog.show();
-
+            showProgressDialog();
         }
 
         @Override
-        protected Void doInBackground(String... params) {
+        protected String doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
-
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&latitude="
+            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&longitude="
                     + sp.getLongitude().toString() + "&token=" + token());
-
             Log.e(TAG, "Response from url: " + jsonStr);
-
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-                    JSONArray eat = jsonObj.getJSONArray("data");
-                    for (int i = 0; i < eat.length(); i++) {
-                        JSONObject c = eat.getJSONObject(i);
-                        String place = c.getString("place");
-                        String minutes = c.getString("minutes");
-                        int sochan = Math.round(Float.parseFloat(minutes));
-                        // Get Json Place
-                        JSONObject b = new JSONObject(place);
-                        String display_name = b.getString("display_name");
-                        String description = b.getString("description");
-                        String address = b.getString("address");
-                        String city = b.getString("city");
-                        String id = b.getString("id");
-//                        String photo = b.getString("photo");
-                        String url = url_img + "?token=" + token() + "&id=" + id;
-
-                        // tmp hash map for single contact
-                        Places places = new Places();
-
-                        // adding each child node to HashMap key => value
-                        places.setDisplay_name(display_name);
-                        places.setAddress(address);
-                        places.setCity(String.valueOf(sochan));
-                        places.setPhoto(url);
-                        Log.d(TAG, places.toString());
-                        Log.d("img", url.toString());
-                        // adding contact to contact list
-                        placeList.add(places);
-
-                    }
-                } catch (final JSONException e) {
-                    Log.e(TAG, "Json parsing error: " + e.getMessage());
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getContext(),
-                                    "Json parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    });
-
-                }
-            } else {
-                Log.e(TAG, "Couldn't get json from server.");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
-
-            }
-
-            return null;
+            return jsonStr;
         }
-
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            // Dismiss the progress dialog
-       /*     if (pDialog.isShowing())
-                pDialog.dismiss();*/
-            /**
-             * Updating parsed JSON data into ListView
-             *
-             * */
-            placeAdapter = new PlaceAdapter(getContext(), placeList);
-            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+            Log.d(TAG, result);
+            if (result.equals("405")){
+                Toasty.error(getActivity(), "Loading error", Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+            }else{
+                try {
+                    JSONObject root = new JSONObject(result);
+                    int status = root.getInt("status");
+                    if (status == 200){
+                        JSONObject jsonObj = new JSONObject(result);
+                        JSONArray eat = jsonObj.getJSONArray("data");
+                        for (int i = 0; i < eat.length(); i++) {
+                            JSONObject c = eat.getJSONObject(i);
+                            String place = c.getString("place");
+                            String minutes = c.getString("minutes");
+                            int sochan = Math.round(Float.parseFloat(minutes));
+                            // Get Json Place
+                            JSONObject b = new JSONObject(place);
+                            String display_name = b.getString("display_name");
+                            String description = b.getString("description");
+                            String address = b.getString("address");
+                            String city = b.getString("city");
+                            String id = b.getString("id");
+//                        String photo = b.getString("photo");
+                            String url = url_img + "?token=" + token() + "&id=" + id;
 
-            recyclerView.setLayoutManager(linearLayoutManager);
-            recyclerView.setAdapter(placeAdapter);
+                            // tmp hash map for single contact
+                            Places places = new Places();
 
+                            // adding each child node to HashMap key => value
+                            places.setDisplay_name(display_name);
+                            places.setAddress(address);
+                            places.setCity(String.valueOf(sochan));
+                            places.setPhoto(url);
+                            Log.d(TAG, places.toString());
+                            Log.d("img", url.toString());
+                            // adding contact to contact list
+                            placeList.add(places);
+                            setAdapter();
+                        }
+                    }
+                    hideProgressDialog();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    hideProgressDialog();
+                }
+            }
         }
-
-
     }
-
-
+    private void setAdapter(){
+        placeAdapter = new PlaceAdapter(getContext(), placeList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.addItemDecoration(new DrawsLineItem(getActivity(), LinearLayoutManager.VERTICAL));
+        recyclerView.setAdapter(placeAdapter);
+    }
 }

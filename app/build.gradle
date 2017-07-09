@@ -42,5 +42,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.sharish:ShimmerRecyclerView:v1.0.1'
     compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
+    compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
     testCompile 'junit:junit:4.12'
 }
