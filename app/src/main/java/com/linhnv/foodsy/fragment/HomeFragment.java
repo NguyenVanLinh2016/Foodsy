@@ -133,11 +133,9 @@ public class HomeFragment extends BaseFragment {
         @Override
         protected Void doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
-
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&latitude="
+            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&longitude="
                     + sp.getLongitude().toString() + "&token=" + token());
-
             Log.e(TAG, "Response from url: " + jsonStr);
 
             if (jsonStr != null) {
