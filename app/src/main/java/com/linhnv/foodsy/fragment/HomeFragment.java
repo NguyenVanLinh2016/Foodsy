@@ -16,9 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.cooltechworks.views.shimmer.ShimmerRecyclerView;
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.linhnv.foodsy.activity.HomeActivity;
 import com.linhnv.foodsy.activity.MenuActivity;
+import com.linhnv.foodsy.activity.SignInActivity;
 import com.linhnv.foodsy.activity.UpdateInfoActivity;
+import com.linhnv.foodsy.adapter.PlaceAdapterShimmer;
 import com.linhnv.foodsy.model.ClickListener;
 import com.linhnv.foodsy.model.Place;
 import com.linhnv.foodsy.adapter.PlaceAdapter;
@@ -33,21 +37,34 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+
+import es.dmoral.toasty.Toasty;
 
 /**
  * Created by linhnv on 21/05/2017.
  */
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends BaseFragment {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
     private RecyclerView recyclerView;
     private PlaceAdapter placeAdapter;
     private List<Places> placeList;
+    private PlaceAdapterShimmer placeAdapterShimmer;
     private SP sp;
     private String url_places = null;
+    private String url_img = "https://foodsyapp.herokuapp.com/api/place/photo";
     private String url_place_eat = "https://foodsyapp.herokuapp.com/api/place/category/eat";
     private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/category/drink";
     private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/category/entertain";
@@ -76,6 +93,7 @@ public class HomeFragment extends Fragment {
         }));
         sp = new SP(getContext());
 
+        Log.d("User info", sp.getUser());
         Intent i = getActivity().getIntent();
         Bundle b = i.getExtras();
 
@@ -88,6 +106,8 @@ public class HomeFragment extends Fragment {
             url_places = url_place_drink;
         }
         Toast.makeText(getActivity(), url_places, Toast.LENGTH_LONG).show();
+        String latitude = String.valueOf(sp.getLatitude());
+        String longitude = String.valueOf(sp.getLongitude());
         new GetEatInfo().execute();
         return view;
     }
@@ -98,56 +118,60 @@ public class HomeFragment extends Fragment {
         return token;
     }
 
-    public class GetEatInfo extends AsyncTask<Void, Void, Void> {
+    public class GetEatInfo extends AsyncTask<String, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Showing progress dialog
-            pDialog = new ProgressDialog(getActivity());
-            pDialog.setMessage("Please wait...");
-            pDialog.setCancelable(false);
-            pDialog.show();
+//            pDialog = new ProgressDialog(getActivity());
+//            pDialog.setMessage("Please wait...");
+//            pDialog.setCancelable(false);
+//            pDialog.show();
 
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
+        protected Void doInBackground(String... params) {
             HttpHandler sh = new HttpHandler();
 
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_places + "?token=" + token());
-            Log.e(TAG, "Response from url: " + jsonStr);
+            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&latitude="
+                    + sp.getLongitude().toString() + "&token=" + token());
 
+            Log.e(TAG, "Response from url: " + jsonStr);
 
             if (jsonStr != null) {
                 try {
                     JSONObject jsonObj = new JSONObject(jsonStr);
-
-                    // Getting JSON Array node
                     JSONArray eat = jsonObj.getJSONArray("data");
-
-                    // looping through All Contacts
                     for (int i = 0; i < eat.length(); i++) {
                         JSONObject c = eat.getJSONObject(i);
+                        String place = c.getString("place");
+                        String minutes = c.getString("minutes");
+                        int sochan = Math.round(Float.parseFloat(minutes));
+                        // Get Json Place
+                        JSONObject b = new JSONObject(place);
+                        String display_name = b.getString("display_name");
+                        String description = b.getString("description");
+                        String address = b.getString("address");
+                        String city = b.getString("city");
+                        String id = b.getString("id");
+//                        String photo = b.getString("photo");
+                        String url = url_img + "?token=" + token() + "&id=" + id;
 
-                        String display_name = c.getString("display_name");
-                        String description = c.getString("description");
-                        String address = c.getString("address");
-                        String city = c.getString("city");
-
-                        Log.d(TAG, display_name + description + address + city);
                         // tmp hash map for single contact
                         Places places = new Places();
 
                         // adding each child node to HashMap key => value
                         places.setDisplay_name(display_name);
-                        places.setDescription(description);
                         places.setAddress(address);
-                        places.setCity(city);
-
+                        places.setCity(String.valueOf(sochan));
+                        places.setPhoto(url);
                         Log.d(TAG, places.toString());
+                        Log.d("img", url.toString());
                         // adding contact to contact list
                         placeList.add(places);
+
                     }
                 } catch (final JSONException e) {
                     Log.e(TAG, "Json parsing error: " + e.getMessage());
@@ -184,10 +208,11 @@ public class HomeFragment extends Fragment {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // Dismiss the progress dialog
-            if (pDialog.isShowing())
-                pDialog.dismiss();
+       /*     if (pDialog.isShowing())
+                pDialog.dismiss();*/
             /**
              * Updating parsed JSON data into ListView
+             *
              * */
             placeAdapter = new PlaceAdapter(getContext(), placeList);
             LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
@@ -199,5 +224,6 @@ public class HomeFragment extends Fragment {
 
 
     }
+
 
 }

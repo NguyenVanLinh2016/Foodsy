@@ -30,7 +30,7 @@ public class HomeActivity extends AppCompatActivity
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()){
+            switch (item.getItemId()) {
                 case R.id.navigation_home:
                     viewPager.setCurrentItem(0);
                     return true;
@@ -47,12 +47,13 @@ public class HomeActivity extends AppCompatActivity
             return false;
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        if (toolbar != null){
+        if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.app_name);
         }
@@ -71,9 +72,9 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onPageSelected(int position) {
                 //khi keo viewpager thi bottom navigation chay theo
-                if(menuItem != null){
+                if (menuItem != null) {
                     menuItem.setChecked(false);
-                }else{
+                } else {
                     bottomNavigation.getMenu().getItem(0).setChecked(false);
                 }
                 bottomNavigation.getMenu().getItem(position).setChecked(true);
@@ -96,11 +97,13 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
     }
-    private void init(){
-        bottomNavigation  = (BottomNavigationView) findViewById(R.id.navigationBottom);
+
+    private void init() {
+        bottomNavigation = (BottomNavigationView) findViewById(R.id.navigationBottom);
         viewPager = (ViewPager) findViewById(R.id.viewPager1);
     }
-    private void setupViewPager(ViewPager viewPager){
+
+    private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFrag(new HomeFragment());
         viewPagerAdapter.addFrag(new BookmarkFragment());
@@ -128,7 +131,7 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.menu_search:
                 startActivity(new Intent(HomeActivity.this, SearchActivity.class));
                 //finish();

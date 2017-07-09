@@ -39,5 +39,8 @@ dependencies {
     compile 'com.google.code.gson:gson:2.8.0'
     compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.0.2'
     compile 'com.github.GrenderG:Toasty:1.2.5'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.github.sharish:ShimmerRecyclerView:v1.0.1'
+    compile 'com.facebook.shimmer:shimmer:0.1.0@aar'
     testCompile 'junit:junit:4.12'
 }

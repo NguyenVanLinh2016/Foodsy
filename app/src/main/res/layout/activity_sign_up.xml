@@ -113,7 +113,7 @@
         android:layout_marginBottom="@dimen/margin_8dp"
         app:layout_constraintHorizontal_bias="0.0"
         android:imeOptions="actionNext"
-        android:inputType="textCapWords"
+        android:inputType="textEmailAddress"
         android:background="@drawable/textview_ui1"/>
 
     <EditText

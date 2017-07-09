@@ -95,7 +95,7 @@
         android:background="@drawable/textview_ui1"
         android:gravity="center"
         android:imeOptions="actionNext"
-        android:inputType="textCapWords"/>
+        android:inputType="textPersonName"/>
     <EditText
         android:id="@+id/edit_text_email"
         android:layout_width="0dp"
