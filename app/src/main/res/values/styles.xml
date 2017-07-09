@@ -7,7 +7,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
+    <style name="MyButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/bg_screen1</item>
+        <item name="colorButtonNormal">@color/bg_screen1</item>
+    </style>
     <style name="AppLoginTheme" parent="Theme.AccountKit">
         <!-- Customize your theme here. -->
         <item name="com_accountkit_primary_color">@color/colorPrimary</item>

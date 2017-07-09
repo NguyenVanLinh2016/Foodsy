@@ -43,6 +43,7 @@ public class HomeActivity extends AppCompatActivity
                 case R.id.navigation_maps:
                     viewPager.setCurrentItem(3);
                     return true;
+
             }
             return false;
         }
@@ -158,6 +159,8 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
+        }else if (id == R.id.nav_register_admin){
+            startActivity(new Intent(HomeActivity.this, RegisterOwnerActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
