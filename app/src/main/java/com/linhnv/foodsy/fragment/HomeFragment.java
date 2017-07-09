@@ -1,6 +1,7 @@
 package com.linhnv.foodsy.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -58,7 +59,7 @@ import es.dmoral.toasty.Toasty;
 
 public class HomeFragment extends BaseFragment {
 
-    private static final String TAG = HomeActivity.class.getSimpleName();
+    private static final String TAG = HomeFragment.class.getSimpleName();
     private RecyclerView recyclerView;
     private PlaceAdapter placeAdapter;
     private List<Places> placeList;
@@ -69,22 +70,25 @@ public class HomeFragment extends BaseFragment {
     private String url_place_eat = "https://foodsyapp.herokuapp.com/api/place/category/eat";
     private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/category/drink";
     private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/category/entertain";
-    ArrayList<Places> eatList;
-
-    private ProgressDialog pDialog;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView1);
-        placeList = new ArrayList<>();
-
         recyclerView.addOnItemTouchListener(new RecyclerTouchListenerHome(getContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
-                startActivity(new Intent(getActivity(), PlaceDetailActivity.class));
-                //Toast.makeText(getActivity(), "Here", Toast.LENGTH_SHORT).show();
+                Places places = placeList.get(position);
+                Intent intent = new Intent(getActivity(), PlaceDetailActivity.class);
+                Bundle b = new Bundle();
+                b.putInt("id", places.getId());
+                b.putDouble("latitude", places.getLatitude());
+                b.putDouble("longitude", places.getLongitude());
+                b.putString("display_name", places.getDisplay_name());
+                b.putString("url_image", places.getPhoto());
+                intent.putExtras(b);
+                startActivity(intent);
             }
 
             @Override
@@ -92,8 +96,101 @@ public class HomeFragment extends BaseFragment {
 
             }
         }));
-        sp = new SP(getContext());
+        return view;
+    }
 
+    public class GetEatInfo extends AsyncTask<String, Void, String> {
+        String latitude, longitude, token;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            latitude = params[0];
+            longitude = params[1];
+            token = params[2];
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + latitude + "&longitude="
+                    + longitude + "&token=" + token);
+            Log.e(TAG, "Response from url: " + jsonStr);
+            return jsonStr;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideProgressDialog();
+            if (result != null){
+                if (result.equals("405")){
+                    Toasty.error(getActivity(), "Loading error", Toast.LENGTH_SHORT).show();
+                }else{
+                    try {
+                        JSONObject root = new JSONObject(result);
+                        int status = root.getInt("status");
+                        if (status == 200){
+                            JSONArray eat = root.getJSONArray("data");
+                            for (int i = 0; i < eat.length(); i++) {
+                                JSONObject c = eat.getJSONObject(i);
+                                String place = c.getString("place");
+                                String minutes = c.getString("minutes");
+                                int sochan = Math.round(Float.parseFloat(minutes));
+                                // Get Json Place
+                                JSONObject b = new JSONObject(place);
+                                String display_name = b.getString("display_name");
+                                String description = b.getString("description");
+                                String address = b.getString("address");
+                                String city = b.getString("city");
+                                Double latitude = b.getDouble("latitude");
+                                Double longitude = b.getDouble("longitude");
+                                int id = b.getInt("id");
+                                String url = url_img + "?token=" + token + "&id=" + id;
+                                // tmp hash map for single contact
+                                Places places = new Places();
+                                // adding each child node to HashMap key => value
+                                places.setId(id);
+                                places.setDisplay_name(display_name);
+                                places.setAddress(address);
+                                places.setLatitude(latitude);
+                                places.setLongitude(longitude);
+                                places.setCity(String.valueOf(sochan));
+                                places.setPhoto(url);
+                                Log.d(TAG, places.toString());
+                                Log.d("img", url.toString());
+                                // adding contact to contact list
+                                placeList.add(places);
+                                setAdapter();
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d(TAG, "Error");
+            }
+        }
+    }
+    private void setAdapter(){
+        placeAdapter = new PlaceAdapter(getActivity(), placeList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setAdapter(placeAdapter);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        placeList = new ArrayList<>();
+        sp = new SP(getContext());
         Log.d("User info", sp.getUser());
         Intent i = getActivity().getIntent();
         Bundle b = i.getExtras();
@@ -106,91 +203,8 @@ public class HomeFragment extends BaseFragment {
         } else if (url_eat == 2) {
             url_places = url_place_drink;
         }
-        Toast.makeText(getActivity(), url_places, Toast.LENGTH_LONG).show();
-        String latitude = String.valueOf(sp.getLatitude());
-        String longitude = String.valueOf(sp.getLongitude());
-        new GetEatInfo().execute();
-        return view;
-    }
-
-    public String token() {
-        sp = new SP(getContext());
         String token = sp.getToken();
-        return token;
+        Log.d(TAG, "tokenHome: "+ token);
+        new GetEatInfo().execute(String.valueOf(sp.getLatitude()), String.valueOf(sp.getLongitude()), token);
     }
-
-    public class GetEatInfo extends AsyncTask<String, Void, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showProgressDialog();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            HttpHandler sh = new HttpHandler();
-            // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&longitude="
-                    + sp.getLongitude().toString() + "&token=" + token());
-            Log.e(TAG, "Response from url: " + jsonStr);
-            return jsonStr;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            Log.d(TAG, result);
-            hideProgressDialog();
-            if (result.equals("405")){
-                Toasty.error(getActivity(), "Loading error", Toast.LENGTH_SHORT).show();
-            }else{
-                try {
-                    JSONObject root = new JSONObject(result);
-                    int status = root.getInt("status");
-                    if (status == 200){
-                        JSONArray eat = root.getJSONArray("data");
-                        for (int i = 0; i < eat.length(); i++) {
-                            JSONObject c = eat.getJSONObject(i);
-                            String place = c.getString("place");
-                            String minutes = c.getString("minutes");
-                            int sochan = Math.round(Float.parseFloat(minutes));
-                            // Get Json Place
-                            JSONObject b = new JSONObject(place);
-                            String display_name = b.getString("display_name");
-                            String description = b.getString("description");
-                            String address = b.getString("address");
-                            String city = b.getString("city");
-                            String id = b.getString("id");
-//                        String photo = b.getString("photo");
-                            String url = url_img + "?token=" + token() + "&id=" + id;
-
-                            // tmp hash map for single contact
-                            Places places = new Places();
-
-                            // adding each child node to HashMap key => value
-                            places.setDisplay_name(display_name);
-                            places.setAddress(address);
-                            places.setCity(String.valueOf(sochan));
-                            places.setPhoto(url);
-                            Log.d(TAG, places.toString());
-                            Log.d("img", url.toString());
-                            // adding contact to contact list
-                            placeList.add(places);
-                            setAdapter();
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
-    private void setAdapter(){
-        placeAdapter = new PlaceAdapter(getContext(), placeList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
-        recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(placeAdapter);
-    }
-
 }

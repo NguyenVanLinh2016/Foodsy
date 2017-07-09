@@ -30,12 +30,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".activity.SignUpActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.ForgetPasswordActivity" />
         <activity android:name=".activity.MenuActivity" />
         <activity
             android:name=".activity.SignInActivity"
             android:screenOrientation="portrait" />
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/FACEBOOK_APP_ID" />
@@ -48,6 +49,7 @@
         <meta-data
             android:name="com.facebook.accountkit.ClientToken"
             android:value="@string/ACCOUNT_KIT_CLIENT_TOKEN" />
+
         <activity
             android:name="com.facebook.accountkit.ui.AccountKitActivity"
             android:theme="@style/AppLoginTheme"
@@ -83,9 +85,13 @@
         <activity android:name=".activity.SearchActivity" />
         <activity android:name=".activity.PlaceDetailActivity" />
         <activity android:name=".activity.BaseActivity" />
-        <activity android:name=".activity.SplashActivity"></activity>
-        <uses-feature android:name="android.hardware.camera"
+        <activity android:name=".activity.SplashActivity" />
+
+        <uses-feature
+            android:name="android.hardware.camera"
             android:required="true" />
+
+        <activity android:name=".activity.MapActivity"></activity>
     </application>
 
 </manifest>

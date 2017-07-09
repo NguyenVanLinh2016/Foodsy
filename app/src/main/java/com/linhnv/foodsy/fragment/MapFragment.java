@@ -1,6 +1,7 @@
 package com.linhnv.foodsy.fragment;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -61,7 +62,7 @@ import static com.facebook.login.widget.ProfilePictureView.TAG;
  * Created by linhnv on 21/05/2017.
  */
 
-public class MapFragment extends BaseFragment implements DirectionFinderListener {
+public class MapFragment extends BaseFragment implements DirectionFinderListener, GoogleMap.OnInfoWindowClickListener {
     GoogleMap mGoogleMap;
     private MapView mMapView;
     private SP sp;
@@ -72,21 +73,36 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMakers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        sp = new SP(getActivity());
+        listPlace = new ArrayList<>();
+        latitude = sp.getLatitude();
+        longitude = sp.getLongitude();
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        sp = new SP(getActivity());
-        listPlace = new ArrayList<>();
-        latitude = 10.791129;
-        longitude = 106.682403;
-        //latitude = sp.getLatitude();
-        //longitude = sp.getLongitude();
-
         new LoadPlaceAround().execute(sp.getToken(), String.valueOf(latitude), String.valueOf(longitude));
         mMapView = (MapView) view.findViewById(R.id.map_main);
         mMapView.onCreate(savedInstanceState);
+        return view;
+    }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         mMapView.onResume();
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -98,14 +114,23 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
                 LatLng syndey = new LatLng(latitude, longitude);
-                googleMap.addMarker(new MarkerOptions().position(syndey).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).title("Di An thon"));
+                googleMap.addMarker(new MarkerOptions().position(syndey).icon(BitmapDescriptorFactory.fromResource(R.drawable.mylocationgif)));
 
+                Log.d("TEST", listPlace.size() +"--");
+                for ( int j=0; j<listPlace.size(); j++ ){
+                    Log.d("TEST", listPlace.get(j).getId() +"");
+                    googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .title(listPlace.get(j).getDisplay_name()));
+                    //marker.showInfoWindow();
+                    //createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
+                }
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(syndey).zoom(16).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
             }
         });
-        return view;
     }
 
     @Override
@@ -181,8 +206,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
             return jsonStr;
         }
 
-
-
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
@@ -219,7 +242,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                             place.setLongitude(longitude);
                             listPlace.add(place);
                         }
-                        addListMaker();
+                        //addListMaker();
                     }
                     hideProgressDialog();
                 } catch (JSONException e) {
@@ -234,11 +257,34 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
+                Marker marker = null;
                 for ( int j=0; j<listPlace.size(); j++ ){
-                    createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
+                    marker = googleMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                            .title(listPlace.get(j).getDisplay_name()));
+                    //marker.showInfoWindow();
+                    //createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
                 }
+                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
+                {
+
+                    @Override
+                    public boolean onMarkerClick(Marker arg0) {
+                        if(arg0.getTitle().equals("MyHome")) // if marker source is clicked
+                            Toast.makeText(getActivity(), arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+                        return true;
+                    }
+
+                });
+                //mGoogleMap.setOnInfoWindowClickListener((GoogleMap.OnInfoWindowClickListener) getActivity());
+                onInfoWindowClick(marker);
             }
         });
+    }
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        Toast.makeText(getActivity(), "Info window clicked", Toast.LENGTH_SHORT).show();
     }
     //double latitude, double longitude, String title, String snippet, int iconResID
     protected Marker createMarker(GoogleMap googleMap, double latitude, double longitude, String title) {
@@ -246,7 +292,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                 .position(new LatLng(latitude, longitude))
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                 .title(title));
-        marker.showInfoWindow();
+        //marker.showInfoWindow();
         return marker;
     }
 }

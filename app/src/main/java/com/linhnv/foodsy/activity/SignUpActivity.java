@@ -347,6 +347,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 JSONObject root = new JSONObject(result);
                 JSONObject data = root.getJSONObject("data");
                 String token = data.getString("token");
+                sp.setToken(token);
                 new GetUserInfo().execute(token);
                 //if login facebook successful, call method logout because save state in app
                 LoginManager.getInstance().logOut();

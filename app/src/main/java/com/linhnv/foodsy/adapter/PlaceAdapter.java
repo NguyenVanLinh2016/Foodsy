@@ -50,6 +50,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         holder.txtName_Food.setText(place.getAddress());
         holder.txtAgo.setText("Cách đây " + place.getCity()+ " phút");
         Picasso.with(context).load(place.getPhoto()).into(holder.imgPlace);
+
     }
 
     @Override
@@ -67,7 +68,12 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
             txtName_Res = (TextView) itemView.findViewById(R.id.txtName_Res);
             txtName_Food = (TextView) itemView.findViewById(R.id.txtName_Food);
             txtAgo = (TextView) itemView.findViewById(R.id.txtAgo);
-
+//            itemView.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    int item = placeList.get()
+//                }
+//            });
         }
     }
 }

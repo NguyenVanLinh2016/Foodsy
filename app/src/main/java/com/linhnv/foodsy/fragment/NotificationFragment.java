@@ -45,10 +45,20 @@ public class NotificationFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_notifications, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_notification);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         sp = new SP(getActivity());
         list = new ArrayList<>();
         new LoadNotifications().execute(sp.getToken());
-        return view;
     }
 
     class LoadNotifications extends AsyncTask<String, Void, String> {
@@ -58,7 +68,7 @@ public class NotificationFragment extends BaseFragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Loading...");
+            showProgressDialog();
         }
 
         @Override
