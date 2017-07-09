@@ -54,6 +54,7 @@ public class SplashActivity extends AppCompatActivity{
         } else {
             getLastLocation();
         }
+
     }
     @SuppressWarnings("MissingPermission")
     private void getLastLocation() {
