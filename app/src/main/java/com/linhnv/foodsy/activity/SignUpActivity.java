@@ -58,7 +58,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class SignUpActivity extends BaseActivity implements View.OnClickListener{
+public class SignUpActivity extends BaseActivity implements View.OnClickListener {
 
     private ImageView imgCloseSignUp;
     private Button btnSignUp, btnLoginPhone_signup;
@@ -76,6 +76,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public CallbackManager callbackManager;
     //sp
     private SP sp;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,7 +89,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         sp = new SP(this);
     }
 
-    private void init(){
+    private void init() {
         imgCloseSignUp = (ImageView) findViewById(R.id.imgCloseSignUp);
         btnSignUp = (Button) findViewById(R.id.btnSignUp_signup);
         edtUsername = (EditText) findViewById(R.id.edtUsername_signup);
@@ -100,9 +101,10 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         button_login_fb_signup.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         button_login_fb_signup.setCompoundDrawablePadding(0);
     }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.imgCloseSignUp:
                 startActivity(new Intent(SignUpActivity.this, MainActivity.class));
                 finish();
@@ -111,18 +113,18 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 String username = edtUsername.getText().toString().trim();
                 String password = edtPassword.getText().toString().trim();
                 String confirmPass = edtConfirmPass.getText().toString().trim();
-                if (username.length() < 6){
+                if (username.length() < 6) {
                     edtUsername.setError(getString(R.string.error_message_username));
                     edtUsername.requestFocus();
-                }else if(password.length() < 6){
+                } else if (password.length() < 6) {
                     edtPassword.requestFocus();
                     edtPassword.setError(getString(R.string.error_message_password));
-                }else if(confirmPass.length() == 0){
+                } else if (confirmPass.length() == 0) {
                     edtConfirmPass.requestFocus();
                     edtConfirmPass.setError(getString(R.string.error_message_confirmPass));
-                }else if(!password.equalsIgnoreCase(confirmPass)){
+                } else if (!password.equalsIgnoreCase(confirmPass)) {
                     edtConfirmPass.setError(getString(R.string.error_message_confirm));
-                }else{
+                } else {
                     new RegisterUser().execute(username, password);
                 }
                 break;
@@ -190,11 +192,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     public class RegisterUser extends AsyncTask<String, Void, String> {
         HttpHandler httpHandler;
         String username, password;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog();
         }
+
         @Override
         protected String doInBackground(String... params) {
             username = params[0];
@@ -252,17 +256,17 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         @Override
         protected void onPostExecute(String result) {
             hideProgressDialog();
-            if (result.equals("422")){
+            if (result.equals("422")) {
                 Toasty.error(SignUpActivity.this, "Username is exist!", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 try {
                     JSONObject root = new JSONObject(result);
                     int status = root.getInt("status");
-                    if (status == 201){
+                    if (status == 201) {
                         Toasty.success(SignUpActivity.this, "Register successful!!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(SignUpActivity.this, SignInActivity.class));
                         finish();
-                    }else{
+                    } else {
                         Toasty.error(SignUpActivity.this, "Error!", Toast.LENGTH_SHORT).show();
                     }
                 } catch (JSONException e) {
@@ -271,14 +275,17 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             }
         }
     }
-    class SignInSocial extends AsyncTask<String, Void, String>{
+
+    class SignInSocial extends AsyncTask<String, Void, String> {
         HttpHandler httpHandler;
         String username;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             showProgressDialog("Authencation...");
         }
+
         @Override
         protected String doInBackground(String... params) {
             username = params[0];
@@ -349,6 +356,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             }
         }
     }
+
     public void phoneLogin() {
         final Intent intent = new Intent(SignUpActivity.this, AccountKitActivity.class);
         AccountKitConfiguration.AccountKitConfigurationBuilder configurationBuilder =
@@ -362,22 +370,23 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                 configurationBuilder.build());
         startActivityForResult(intent, APP_REQUEST_CODE);
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         //account kit
-        if (requestCode == APP_REQUEST_CODE){// confirm that this response matches your request
+        if (requestCode == APP_REQUEST_CODE) {// confirm that this response matches your request
             AccountKitLoginResult loginResult = data.getParcelableExtra(AccountKitLoginResult.RESULT_KEY);
             String toastMessage = "";
-            if(loginResult.getError() != null){
+            if (loginResult.getError() != null) {
                 toastMessage = loginResult.getError().getErrorType().getMessage();
-            }else if(loginResult.wasCancelled()){
+            } else if (loginResult.wasCancelled()) {
                 toastMessage = "Login Cancelled";
-            }else{
-                if(loginResult.getAccessToken() != null){
+            } else {
+                if (loginResult.getAccessToken() != null) {
                     //toastMessage = "Success: " +loginResult.getAccessToken().getAccountId();
                     Log.i(TAG, toastMessage);
-                }else{
+                } else {
                     //toastMessage = String.format("Success:%s...", loginResult.getAuthorizationCode().substring(0,10));
                     Log.i(TAG, toastMessage);
                 }
@@ -388,13 +397,13 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                         // Get Account Kit ID
                         String accountKitId = account.getId();
                         Log.e("Account Kit Id", accountKitId);
-                        if(account.getPhoneNumber()!=null) {
+                        if (account.getPhoneNumber() != null) {
                             Log.e("CountryCode", "" + account.getPhoneNumber().getCountryCode());
                             Log.e("PhoneNumber", "" + account.getPhoneNumber().getPhoneNumber());
                             // Get phone number
                             PhoneNumber phoneNumber = account.getPhoneNumber();
                             phoneNumberString = phoneNumber.toString();
-                            String phone = "0"+ phoneNumberString.substring(3, phoneNumberString.length());
+                            String phone = "0" + phoneNumberString.substring(3, phoneNumberString.length());
                             //save phone in sp
                             sp.setPhoneNumber(phone);
                             //call login get token and then check user
@@ -402,25 +411,26 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
                             Log.e("NumberString", phoneNumberString);
                         }
 
-                        if(account.getEmail()!=null)
-                            Log.e("Email",account.getEmail());
+                        if (account.getEmail() != null)
+                            Log.e("Email", account.getEmail());
                     }
 
                     @Override
                     public void onError(final AccountKitError error) {
                         // Handle Error
-                        Log.e(TAG,error.toString());
+                        Log.e(TAG, error.toString());
                     }
                 });
                 toastMessage = "Login successful!!";
             }
             Toasty.success(SignUpActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
-        }else{
+        } else {
             //facebook
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
-    public class GetUserInfo extends AsyncTask<String, String, String>{
+
+    public class GetUserInfo extends AsyncTask<String, String, String> {
         HttpHandler httpHandler;
         String token;
 
@@ -434,7 +444,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         protected String doInBackground(String... params) {
             token = params[0];
             httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall(url_get_profile +"?token="+token);
+            String jsonStr = httpHandler.makeServiceCall(url_get_profile + "?token=" + token);
             return jsonStr;
         }
 
@@ -445,23 +455,23 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             try {
                 JSONObject root = new JSONObject(result);
                 int status = root.getInt("status");
-                if (status == 200){
+                if (status == 200) {
                     JSONObject jsonObject = root.getJSONObject("data");
                     String gender = jsonObject.getString("gender");
-                    if (gender.equalsIgnoreCase("n")){
+                    if (gender.equalsIgnoreCase("n")) {
                         Intent intent = new Intent(SignUpActivity.this, UpdateInfoActivity.class);
                         Bundle bundle = new Bundle();
                         bundle.putString("token", token);
                         intent.putExtras(bundle);
                         startActivity(intent);
                         finish();
-                    }else{
+                    } else {
                         startActivity(new Intent(SignUpActivity.this, MenuActivity.class));
                         sp.setStateLogin(true);
                         sp.setToken(token);
                         finish();
                     }
-                }else{
+                } else {
                     Toasty.success(SignUpActivity.this, "Error!!", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {

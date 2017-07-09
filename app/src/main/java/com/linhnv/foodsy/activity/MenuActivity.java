@@ -15,6 +15,7 @@ import com.linhnv.foodsy.model.Place;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
     FrameLayout frame_eat, frame_drink, frame_entertaiment, frame_bookmark;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

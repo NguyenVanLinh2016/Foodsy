@@ -32,7 +32,7 @@ import com.linhnv.foodsy.model.SP;
 
 import java.util.Locale;
 
-public class SplashActivity extends AppCompatActivity{
+public class SplashActivity extends AppCompatActivity {
     private static final String TAG = SplashActivity.class.getSimpleName();
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
     protected Location mLastLocation;
@@ -45,6 +45,7 @@ public class SplashActivity extends AppCompatActivity{
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         sp = new SP(this);
     }
+
     @Override
     public void onStart() {
         super.onStart();
@@ -56,6 +57,7 @@ public class SplashActivity extends AppCompatActivity{
         }
 
     }
+
     @SuppressWarnings("MissingPermission")
     private void getLastLocation() {
         mFusedLocationClient.getLastLocation()
@@ -69,18 +71,20 @@ public class SplashActivity extends AppCompatActivity{
                             finish();
                         } else {
                             Log.w(TAG, "Can't get location", task.getException());
-                            sp.setLocationUser(0,  0);
+                            sp.setLocationUser(0, 0);
                             startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             finish();
                         }
                     }
                 });
     }
+
     private boolean checkPermissions() {
         int permissionState = ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION);
         return permissionState == PackageManager.PERMISSION_GRANTED;
     }
+
     private void startLocationPermissionRequest() {
         ActivityCompat.requestPermissions(SplashActivity.this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
@@ -101,7 +105,6 @@ public class SplashActivity extends AppCompatActivity{
             startLocationPermissionRequest();
         }
     }
-
     /**
      * Callback received when a permissions request has been completed.
      */
