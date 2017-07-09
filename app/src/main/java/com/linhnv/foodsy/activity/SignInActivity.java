@@ -480,6 +480,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                 if (status == 200){
                     JSONObject jsonObject = root.getJSONObject("data");
                     String gender = jsonObject.getString("gender");
+                    sp.setToken(token);
                     if (gender.equalsIgnoreCase("n")){
                         Intent intent = new Intent(SignInActivity.this, UpdateInfoActivity.class);
                         Bundle bundle = new Bundle();
@@ -490,7 +491,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
                     }else{
                         startActivity(new Intent(SignInActivity.this, MenuActivity.class));
                         sp.setStateLogin(true);
-                        sp.setToken(token);
                         finish();
                     }
                 }else{
