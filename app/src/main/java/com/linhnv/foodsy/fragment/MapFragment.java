@@ -2,6 +2,7 @@ package com.linhnv.foodsy.fragment;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,13 +22,22 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.gson.Gson;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.activity.BaseActivity;
 import com.linhnv.foodsy.activity.SignInActivity;
+import com.linhnv.foodsy.model.DirectionFinderListener;
+import com.linhnv.foodsy.model.Place;
+import com.linhnv.foodsy.model.Places;
+import com.linhnv.foodsy.model.Route;
 import com.linhnv.foodsy.model.SP;
 import com.linhnv.foodsy.network.HttpHandler;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,32 +48,44 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import es.dmoral.toasty.Toasty;
 
+import static com.facebook.login.widget.ProfilePictureView.TAG;
+
 /**
  * Created by linhnv on 21/05/2017.
  */
 
-public class MapFragment extends BaseFragment {
+public class MapFragment extends BaseFragment implements DirectionFinderListener {
     GoogleMap mGoogleMap;
     private MapView mMapView;
     private SP sp;
     private boolean flag = false;
     private static final String URL_PLACE_AROUND = "https://foodsyapp.herokuapp.com/api/place/around";
+    double latitude, longitude;
+    private List<Places> listPlace;
+    private List<Marker> originMarkers = new ArrayList<>();
+    private List<Marker> destinationMakers = new ArrayList<>();
+    private List<Polyline> polylinePaths = new ArrayList<>();
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         sp = new SP(getActivity());
-        final double latitude = sp.getLatitude();
-        final double longitude = sp.getLongitude();
+        listPlace = new ArrayList<>();
+        latitude = 10.791129;
+        longitude = 106.682403;
+        //latitude = sp.getLatitude();
+        //longitude = sp.getLongitude();
+
+        new LoadPlaceAround().execute(sp.getToken(), String.valueOf(latitude), String.valueOf(longitude));
         mMapView = (MapView) view.findViewById(R.id.map_main);
         mMapView.onCreate(savedInstanceState);
-
-        showProgressDialog("Loading...");
 
         mMapView.onResume();
         try {
@@ -77,13 +99,12 @@ public class MapFragment extends BaseFragment {
                 mGoogleMap = googleMap;
                 LatLng syndey = new LatLng(latitude, longitude);
                 googleMap.addMarker(new MarkerOptions().position(syndey).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)).title("Di An thon"));
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(syndey).zoom(12).build();
+
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(syndey).zoom(16).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
             }
         });
-        sp.getToken();
-        Log.d("TEST", sp.getToken());
         return view;
     }
 
@@ -109,73 +130,55 @@ public class MapFragment extends BaseFragment {
     public void onStart() {
         super.onStart();
     }
+
+    @Override
+    public void onDirectionFinderStart() {
+        showProgressDialog("Loading...");
+        if (originMarkers != null){
+            for (Marker marker: originMarkers){
+                marker.remove();
+            }
+        }
+
+        if (destinationMakers != null){
+            for (Marker marker: destinationMakers){
+                marker.remove();
+            }
+        }
+        if (polylinePaths != null) {
+            for (Polyline polyline:polylinePaths ) {
+                polyline.remove();
+            }
+        }
+    }
+
+    @Override
+    public void onDirectionFinderSuccess(List<Route> routes) {
+        polylinePaths = new ArrayList<>();
+        originMarkers = new ArrayList<>();
+        destinationMakers = new ArrayList<>();
+        for(Route route: routes){
+
+        }
+    }
+
     class LoadPlaceAround extends AsyncTask<String, Void, String>{
         HttpHandler httpHandler;
-        String latitude, longitude;
-        String token;
+        String token, latitude, longitude;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Authencation...");
+            showProgressDialog("Loading...");
         }
         @Override
         protected String doInBackground(String... params) {
-            latitude = params[0];
-            longitude = params[1];
-            token = params[2];
-            try {
-                httpHandler = new HttpHandler();
-                URL url = new URL(URL_PLACE_AROUND); // here is your URL path
-
-                JSONObject postDataParams = new JSONObject();
-                postDataParams.put("latitude", latitude);
-                postDataParams.put("longitude", longitude);
-                postDataParams.put("token", token);
-                Log.e("params", postDataParams.toString());
-
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setReadTimeout(15000 /* milliseconds */);
-                conn.setConnectTimeout(15000 /* milliseconds */);
-                conn.setRequestMethod("POST");
-                conn.setDoInput(true);
-                conn.setDoOutput(true);
-
-                OutputStream os = conn.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(
-                        new OutputStreamWriter(os, "UTF-8"));
-                writer.write(httpHandler.getPostDataString(postDataParams));
-
-                writer.flush();
-                writer.close();
-                os.close();
-
-                int responseCode = conn.getResponseCode();
-
-                if (responseCode == HttpsURLConnection.HTTP_OK) {
-
-                    BufferedReader in = new BufferedReader(new
-                            InputStreamReader(
-                            conn.getInputStream()));
-
-                    StringBuffer sb = new StringBuffer("");
-                    String line = "";
-
-                    while ((line = in.readLine()) != null) {
-
-                        sb.append(line);
-                        break;
-                    }
-
-                    in.close();
-                    return sb.toString();
-
-                } else {
-                    return new String(String.valueOf(responseCode));
-                }
-            } catch (Exception e) {
-                return new String("Exception: " + e.getMessage());
-            }
+            token = params[0];
+            latitude = params[1];
+            longitude = params[2];
+            httpHandler = new HttpHandler();
+            String jsonStr = httpHandler.makeServiceCall(URL_PLACE_AROUND +"?token="+token+"&latitude="+latitude+"&longitude="+longitude);
+            return jsonStr;
         }
 
 
@@ -183,25 +186,67 @@ public class MapFragment extends BaseFragment {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            hideProgressDialog();
-            Log.d("TEST", result);
-//            if (result.equals("422")){
-//                Toasty.error(SignInActivity.this, "Username or password is correct", Toast.LENGTH_SHORT).show();
-//            }else{
-//                try {
-//                    JSONObject root = new JSONObject(result);
-//                    int status = root.getInt("status");
-//                    if (status == 200){
-//                        JSONObject jsonObject = root.getJSONObject("data");
-//                        token = jsonObject.getString("token");
-//                        Log.d(TAG, token);
-//                        //get user info
-//                        new SignInActivity.GetUserInfo().execute(token);
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            if (result.equals("405")){
+                Toasty.error(getActivity(), "Loading error", Toast.LENGTH_SHORT).show();
+                hideProgressDialog();
+            }else{
+                try {
+                    JSONObject root = new JSONObject(result);
+                    int status = root.getInt("status");
+                    if (status == 200){
+                        JSONArray jsonArray = root.getJSONArray("data");
+                        for ( int i = 0; i<jsonArray.length(); i++ ){
+                            JSONObject data = jsonArray.getJSONObject(i);
+                            int id = data.getInt("id");
+                            String display_name = data.getString("display_name");
+                            String description = data.getString("description");
+                            String address = data.getString("address");
+                            String phone_number = data.getString("phone_number");
+                            String email = data.getString("email");
+                            String photo = data.getString("photo");
+                            String price_limit = data.getString("price_limit");
+                            String time_open = data.getString("time_open");
+                            String time_close = data.getString("time_close");
+                            String wifi_password = data.getString("wifi_password");
+                            Double latitude = data.getDouble("latitude");
+                            Double longitude = data.getDouble("longitude");
+                            String user_id = data.getString("user_id");
+
+                            final Places place = new Places();
+                            place.setId(id);
+                            place.setDisplay_name(display_name);
+                            place.setLatitude(latitude);
+                            place.setLongitude(longitude);
+                            listPlace.add(place);
+                        }
+                        addListMaker();
+                    }
+                    hideProgressDialog();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    hideProgressDialog();
+                }
+            }
         }
+    }
+    private void addListMaker(){
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mGoogleMap = googleMap;
+                for ( int j=0; j<listPlace.size(); j++ ){
+                    createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
+                }
+            }
+        });
+    }
+    //double latitude, double longitude, String title, String snippet, int iconResID
+    protected Marker createMarker(GoogleMap googleMap, double latitude, double longitude, String title) {
+        Marker marker = googleMap.addMarker(new MarkerOptions()
+                .position(new LatLng(latitude, longitude))
+                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                .title(title));
+        marker.showInfoWindow();
+        return marker;
     }
 }

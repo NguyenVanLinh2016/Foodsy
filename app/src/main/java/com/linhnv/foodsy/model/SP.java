@@ -19,7 +19,7 @@ public class SP {
     private static final String KEY_USER = "user";
     private static final String PREFS_FILE_USER = "user_info";
     private static final String KEY_PHONE = "phonenumber";
-    private static final String KEY_LATITUDE = "longtitude";
+    private static final String KEY_LATITUDE = "latitude";
     private static final String KEY_LONGITUDE = "longtitude";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_USER_INFO= "info_user";

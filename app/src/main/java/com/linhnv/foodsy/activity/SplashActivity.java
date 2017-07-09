@@ -64,6 +64,7 @@ public class SplashActivity extends AppCompatActivity{
                         if (task.isSuccessful() && task.getResult() != null) {
                             mLastLocation = task.getResult();
                             sp.setLocationUser(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                            Log.d("TEST", mLastLocation.getLatitude() +"--"+ mLastLocation.getLongitude());
                             startActivity(new Intent(SplashActivity.this, MainActivity.class));
                             finish();
                         } else {

@@ -16,8 +16,8 @@ public class Places {
     private String time_open;
     private String time_close;
     private String wifi_password;
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
     private String status;
     private int user_id;
 
@@ -33,7 +33,7 @@ public class Places {
 
     public Places(int id, String display_name, String description, String address,
                   String city, String email, String photo, String price_limit, String time_open, String time_close,
-                  String wifi_password, String latitude, String longitude, String status, int user_id) {
+                  String wifi_password, Double latitude, Double longitude, String status, int user_id) {
         this.id = id;
         this.display_name = display_name;
         this.description = description;
@@ -141,19 +141,19 @@ public class Places {
         this.wifi_password = wifi_password;
     }
 
-    public String getLatitude() {
+    public Double getLatitude() {
         return latitude;
     }
 
-    public void setLatitude(String latitude) {
+    public void setLatitude(Double latitude) {
         this.latitude = latitude;
     }
 
-    public String getLongitude() {
+    public Double getLongitude() {
         return longitude;
     }
 
-    public void setLongitude(String longitude) {
+    public void setLongitude(Double longitude) {
         this.longitude = longitude;
     }
 
