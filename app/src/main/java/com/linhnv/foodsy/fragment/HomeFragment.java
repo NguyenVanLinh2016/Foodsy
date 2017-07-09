@@ -108,6 +108,7 @@ public class HomeFragment extends BaseFragment {
         Toast.makeText(getActivity(), url_places, Toast.LENGTH_LONG).show();
         String latitude = String.valueOf(sp.getLatitude());
         String longitude = String.valueOf(sp.getLongitude());
+
         new GetEatInfo().execute();
         return view;
     }
@@ -135,9 +136,10 @@ public class HomeFragment extends BaseFragment {
             HttpHandler sh = new HttpHandler();
 
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&latitude="
+            String jsonStr = sh.makeServiceCall(url_places + "?latitude=" + sp.getLatitude().toString() + "&longitude="
                     + sp.getLongitude().toString() + "&token=" + token());
 
+            Log.e("my location", sp.getLatitude().toString() + sp.getLongitude().toString());
             Log.e(TAG, "Response from url: " + jsonStr);
 
             if (jsonStr != null) {
