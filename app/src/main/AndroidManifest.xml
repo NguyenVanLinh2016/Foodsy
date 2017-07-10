@@ -91,6 +91,7 @@
         <uses-feature
             android:name="android.hardware.camera"
             android:required="true" />
+        <activity android:name=".activity.MapActivity"/>
     </application>
 
 </manifest>

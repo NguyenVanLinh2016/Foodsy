@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +38,7 @@ import com.linhnv.foodsy.network.HttpHandler;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
@@ -43,9 +46,12 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlaceDetailActivity extends BaseActivity implements DirectionFinderListener{
+import es.dmoral.toasty.Toasty;
 
-    TextView mTextView_foodMenu;
+public class PlaceDetailActivity extends BaseActivity implements DirectionFinderListener, View.OnClickListener{
+
+    private static final String TAG = PlaceDetailActivity.class.getSimpleName();
+    private TextView mTextView_foodMenu;
     private TextView mTextView_placeDetails;
     private TextView mTextView_placeReviews;
     private RecyclerView recycle_view_foodMenu;
@@ -54,6 +60,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private Button button_ready_detail;
     //toolbar
     private TextView text_view_name_detail;
+    private ImageView image_view_back_detail;
 
     private ArrayList<PLaceFoodMenu> mPlaceFoodMenuList;
     private List<PlaceFoodReviews> mPlaceFoodReviewsList;
@@ -62,7 +69,11 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private PlaceFoodReviewsAdapter mPlaceFoodReviewsAdapter;
 
     private static String urlPlace = "https://foodsyapp.herokuapp.com/api/place";
+    private String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
     private SP sp;
+    double latitude;
+    double longitude;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,12 +82,12 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         sp = new SP(this);
         //get data from intent
         int id = getIntent().getExtras().getInt("id");
-        final double latitude = getIntent().getExtras().getDouble("latitude");
-        final double longitude = getIntent().getExtras().getDouble("longitude");
+        latitude = getIntent().getExtras().getDouble("latitude");
+        longitude = getIntent().getExtras().getDouble("longitude");
         String display_name = getIntent().getExtras().getString("display_name");
         String url_image = getIntent().getExtras().getString("url_image");
         if (url_image.length() != 0){
-            Picasso.with(this).load(url_image).into(image_view_photo_detail);
+            //Picasso.with(this).load(url_image).into(image_view_photo_detail);
         }else{
             //setimage default
         }
@@ -85,57 +96,49 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         String origin = String.valueOf(sp.getLatitude() +","+ sp.getLongitude());
         String destination = String.valueOf(latitude +","+ longitude);
         sendRequest(origin, destination);
-        //setText Button
-        button_ready_detail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(PlaceDetailActivity.this, MapActivity.class);
-                Bundle b = new Bundle();
-                b.putDouble("latitude", latitude);
-                b.putDouble("longitude", longitude);
-                intent.putExtras(b);
-                startActivity(intent);
-            }
-        });
+
 
         Toolbar toolbar = new Toolbar(this);
         if (toolbar != null){
             //set text toolbae
         }
-        mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-        recycle_view_foodMenu.setVisibility(View.VISIBLE);
         foodMenu();
+//        mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
+//        recycle_view_foodMenu.setVisibility(View.VISIBLE);
+//        foodMenu();
+//
+//        mTextView_foodMenu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setTextColor();
+//                mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
+//                recycle_view_foodMenu.setVisibility(View.VISIBLE);
+//                recycle_view_foodReviews.setVisibility(View.GONE);
+//               // foodMenu();
+//            }
+//        });
+//        mTextView_placeDetails.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setTextColor();
+//                mTextView_placeDetails.setTextColor(Color.parseColor("#3cb963"));
+//                recycle_view_foodMenu.setVisibility(View.VISIBLE);
+//                recycle_view_foodReviews.setVisibility(View.GONE);
+//               // foodMenu();
+//            }
+//        });
+//        mTextView_placeReviews.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setTextColor();
+//                mTextView_placeReviews.setTextColor(Color.parseColor("#3cb963"));
+//                recycle_view_foodMenu.setVisibility(View.GONE);
+//                recycle_view_foodReviews.setVisibility(View.VISIBLE);
+//                foodReviews();
+//            }
+//        });
 
-        mTextView_foodMenu.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTextColor();
-                mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-                recycle_view_foodMenu.setVisibility(View.VISIBLE);
-                recycle_view_foodReviews.setVisibility(View.GONE);
-               // foodMenu();
-            }
-        });
-        mTextView_placeDetails.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTextColor();
-                mTextView_placeDetails.setTextColor(Color.parseColor("#3cb963"));
-                recycle_view_foodMenu.setVisibility(View.VISIBLE);
-                recycle_view_foodReviews.setVisibility(View.GONE);
-               // foodMenu();
-            }
-        });
-        mTextView_placeReviews.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setTextColor();
-                mTextView_placeReviews.setTextColor(Color.parseColor("#3cb963"));
-                recycle_view_foodMenu.setVisibility(View.GONE);
-                recycle_view_foodReviews.setVisibility(View.VISIBLE);
-                foodReviews();
-            }
-        });
+
 
     }
 
@@ -148,6 +151,11 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         image_view_photo_detail = (ImageView) findViewById(R.id.image_view_photo_detail);
         button_ready_detail = (Button) findViewById(R.id.button_ready_detail);
         text_view_name_detail = (TextView) findViewById(R.id.text_view_name_detail);
+        image_view_back_detail = (ImageView) findViewById(R.id.image_view_back_detail);
+
+        //setonClick
+        button_ready_detail.setOnClickListener(this);
+        image_view_back_detail.setOnClickListener(this);
     }
 
     private void setTextColor() {
@@ -158,6 +166,12 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
 
     private void foodMenu() {
         mPlaceFoodMenuList = new ArrayList<>();
+        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+
         mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
         mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
         mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
@@ -185,9 +199,25 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         recycle_view_foodReviews.setAdapter(mPlaceFoodReviewsAdapter);
     }
 
-    private class getPlaceDetail extends AsyncTask<String, Void, String> {
-        String name, price, description, token;
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.button_ready_detail:
+                Intent intent = new Intent(PlaceDetailActivity.this, MapActivity.class);
+                Bundle b = new Bundle();
+                b.putDouble("latitude", latitude);
+                b.putDouble("longitude", longitude);
+                intent.putExtras(b);
+                startActivity(intent);
+                break;
+            case R.id.image_view_back_detail:
+                finish();
+                break;
+        }
+    }
 
+    private class LoadPlaceDetail extends AsyncTask<String, Void, String> {
+        String token, id;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -196,27 +226,55 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
 
         @Override
         protected String doInBackground(String... params) {
-            HttpHandler httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall(urlPlace);
-            mPlaceFoodMenuList = new ArrayList<>();
+            token = params[0];
+            id = params[1];
+            HttpHandler sh = new HttpHandler();
+            String jsonStr = sh.makeServiceCall(URL_PLACE_DETAIL +"?token="+token +"&id="+id);
+            Log.e(TAG, "Response from url: " + jsonStr);
+            return jsonStr;
+        }
 
-            if (jsonStr != null) {
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideProgressDialog();
+            if (result != null){
                 try {
-                    JSONObject jsonObject = new JSONObject(jsonStr);
-                    JSONArray data = new JSONArray("data");
-                    for (int i = 0; i < data.length(); i++) {
-                     JSONObject c = data.getJSONObject(i);
-                        PLaceFoodMenu pLaceFoodMenu = new PLaceFoodMenu();
-                        pLaceFoodMenu.foodName = c.getString("display_name");
-                        pLaceFoodMenu.price = Double.parseDouble(c.getString("price_limit"));
-                        pLaceFoodMenu.foodDescription= c.getString("description");
-                        mPlaceFoodMenuList.add(pLaceFoodMenu);
+                    JSONObject root = new JSONObject(result);
+                    int status = root.getInt("status");
+                    if (status == 200){
+                        JSONArray data = root.getJSONArray("data");
+                        for ( int i = 0; i < data.length(); i++ ) {
+                            JSONObject menu = data.getJSONObject(i);
+                            //data category_name: Gỏi & salad,Món ăn nhẹ,Sashimi...
+                            String category_name = menu.getString("category_name");
+                            JSONArray products = menu.getJSONArray("products");
+                            //get array in product
+                            for ( int j = 0; j<products.length(); j++){
+                                JSONObject item = products.getJSONObject(j);
+                                int id = item.getInt("id");
+                                String name = item.getString("name");
+                                String description = item.getString("description");
+                                String photo = item.getString("photo");
+                                int price = item.getInt("price");
+                                String type = item.getString("type");
+                                String status_menu = item.getString("status");
+                                int category_id = item.getInt("category_id");
+                                Log.d(TAG, id +"+"+name);
+                            }
+                            Log.d(TAG, category_name +"");
+                        }
+                    }else if (status == 405){
+                        Toasty.error(PlaceDetailActivity.this, "Load data error!", Toast.LENGTH_SHORT).show();
+                    }else{
+                        Toasty.error(PlaceDetailActivity.this, "Error!", Toast.LENGTH_SHORT).show();
                     }
-
-                } catch (Exception e) {
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
+            }else{
+                Log.d(TAG, "Error");
             }
-            return null;
         }
     }
 
