@@ -51,7 +51,7 @@
     <!-- Update info activity -->
     <string name="image_avatar">Ảnh đại diện</string>
     <string name="full_name">Tên đầy đủ</string>
-    <string name="phone">Số điện thoại</string>
+    <string name="phone">Điện thoại</string>
     <string name="address">Địa chỉ</string>
     <string name="gender">Giới tính</string>
     <string name="male">Nam</string>
@@ -112,4 +112,13 @@
 
     <string name="dialog_title_update">Thông báo</string>
     <string name="dialog_message_update">Bạn muốn cập thông tin sau?</string>
+
+    <!--Place detail-->
+    <string name="address_place">Địa chỉ: </string>
+    <string name="phone_place">Điện thoại: </string>
+    <string name="email_place">Email: </string>
+    <string name="time_place">Thời gian: </string>
+    <string name="price_place">Giá: </string>
+    <string name="wifi_place">Wifi: </string>
+    <string name="description_place">Mô tả: </string>
 </resources>

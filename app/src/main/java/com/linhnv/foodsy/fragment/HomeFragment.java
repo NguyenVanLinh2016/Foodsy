@@ -87,6 +87,14 @@ public class HomeFragment extends BaseFragment {
                 b.putDouble("longitude", places.getLongitude());
                 b.putString("display_name", places.getDisplay_name());
                 b.putString("url_image", places.getPhoto());
+                b.putString("address", places.getAddress());
+                b.putString("phone", places.getPhone_number());
+                b.putString("email", places.getEmail());
+                b.putString("price", places.getPrice_limit());
+                b.putString("time_open", places.getTime_open());
+                b.putString("time_close", places.getTime_close());
+                b.putString("wifi", places.getWifi_password());
+                b.putString("description", places.getDescription());
                 intent.putExtras(b);
                 startActivity(intent);
             }
@@ -144,18 +152,30 @@ public class HomeFragment extends BaseFragment {
                                 String description = b.getString("description");
                                 String address = b.getString("address");
                                 String city = b.getString("city");
+                                String phone_number = b.getString("phone_number");
+                                String email = b.getString("email");
                                 Double latitude = b.getDouble("latitude");
                                 Double longitude = b.getDouble("longitude");
                                 int id = b.getInt("id");
                                 String url = url_img + "?token=" + token + "&id=" + id;
+                                String price_limit = b.getString("price_limit");
+                                String time_open = b.getString("time_open");
+                                String time_close = b.getString("time_close");
+                                String wifi_password = b.getString("wifi_password");
                                 // tmp hash map for single contact
                                 Places places = new Places();
                                 // adding each child node to HashMap key => value
                                 places.setId(id);
                                 places.setDisplay_name(display_name);
                                 places.setAddress(address);
+                                places.setPhone_number(phone_number);
+                                places.setEmail(email);
                                 places.setLatitude(latitude);
                                 places.setLongitude(longitude);
+                                places.setPrice_limit(price_limit);
+                                places.setTime_open(time_open);
+                                places.setTime_close(time_close);
+                                places.setWifi_password(wifi_password);
                                 places.setCity(String.valueOf(sochan));
                                 places.setPhoto(url);
                                 Log.d(TAG, places.toString());

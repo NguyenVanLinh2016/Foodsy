@@ -1,37 +1,30 @@
 package com.linhnv.foodsy.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.Polyline;
-import com.google.android.gms.maps.model.PolylineOptions;
 import com.linhnv.foodsy.R;
+import com.linhnv.foodsy.adapter.ExpanlistFoodMenuAdapter;
 import com.linhnv.foodsy.model.DirectionFinder;
 import com.linhnv.foodsy.model.DirectionFinderListener;
-import com.linhnv.foodsy.model.DrawsLineItem;
-import com.linhnv.foodsy.model.PLaceFoodMenu;
-import com.linhnv.foodsy.adapter.PlaceFoodMenuAdapter;
+import com.linhnv.foodsy.model.FoodMenu;
+import com.linhnv.foodsy.adapter.PlaceDetailMenuAdapter;
+import com.linhnv.foodsy.model.Place;
 import com.linhnv.foodsy.model.PlaceFoodReviews;
 import com.linhnv.foodsy.adapter.PlaceFoodReviewsAdapter;
+import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.Route;
 import com.linhnv.foodsy.model.SP;
 import com.linhnv.foodsy.network.HttpHandler;
@@ -42,8 +35,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import es.dmoral.toasty.Toasty;
@@ -54,25 +47,34 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private TextView mTextView_foodMenu;
     private TextView mTextView_placeDetails;
     private TextView mTextView_placeReviews;
-    private RecyclerView recycle_view_foodMenu;
     private RecyclerView recycle_view_foodReviews;
+    private ScrollView scroll_view_menu;
+    private ScrollView scroll_view_detail;
+    private ExpandableListView expandable_lv_foodMenu;
+    private ExpanlistFoodMenuAdapter expandalelist_Adapter;
+    private List<String> listDataHeader;
+    private HashMap<String, List<FoodMenu>> listDataChild;
     private ImageView image_view_photo_detail;
     private Button button_ready_detail;
+    //view
+    private View view_foodMenu;
+    private View view_details;
+    private View view_placeReviews;
     //toolbar
     private TextView text_view_name_detail;
     private ImageView image_view_back_detail;
 
-    private ArrayList<PLaceFoodMenu> mPlaceFoodMenuList;
     private List<PlaceFoodReviews> mPlaceFoodReviewsList;
 
-    private PlaceFoodMenuAdapter mPlaceFoodMenuAdapter;
     private PlaceFoodReviewsAdapter mPlaceFoodReviewsAdapter;
 
-    private static String urlPlace = "https://foodsyapp.herokuapp.com/api/place";
     private String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
     private SP sp;
     double latitude;
     double longitude;
+
+    //test
+    private HashMap<String, List<FoodMenu>> list_test =  new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,105 +88,142 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         longitude = getIntent().getExtras().getDouble("longitude");
         String display_name = getIntent().getExtras().getString("display_name");
         String url_image = getIntent().getExtras().getString("url_image");
+        Log.d(TAG, url_image);
         if (url_image.length() != 0){
-            //Picasso.with(this).load(url_image).into(image_view_photo_detail);
+//            Picasso.with(this)
+//                    .load(url_image)
+//                    .placeholder(R.drawable.bglogin5)
+//                    .error(R.drawable.bglogin5)
+//                    .into(image_view_photo_detail);
         }else{
-            //setimage default
+            image_view_photo_detail.setImageResource(R.drawable.bglogin5);
         }
+
+
         text_view_name_detail.setText(display_name);
         //duration map
         String origin = String.valueOf(sp.getLatitude() +","+ sp.getLongitude());
         String destination = String.valueOf(latitude +","+ longitude);
         sendRequest(origin, destination);
 
+        mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
+        scroll_view_menu.setVisibility(View.VISIBLE);
+        expandable_lv_foodMenu.setVisibility(View.VISIBLE);
 
-        Toolbar toolbar = new Toolbar(this);
-        if (toolbar != null){
-            //set text toolbae
-        }
-        foodMenu();
-//        mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-//        recycle_view_foodMenu.setVisibility(View.VISIBLE);
-//        foodMenu();
-//
-//        mTextView_foodMenu.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setTextColor();
-//                mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-//                recycle_view_foodMenu.setVisibility(View.VISIBLE);
-//                recycle_view_foodReviews.setVisibility(View.GONE);
-//               // foodMenu();
-//            }
-//        });
-//        mTextView_placeDetails.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setTextColor();
-//                mTextView_placeDetails.setTextColor(Color.parseColor("#3cb963"));
-//                recycle_view_foodMenu.setVisibility(View.VISIBLE);
-//                recycle_view_foodReviews.setVisibility(View.GONE);
-//               // foodMenu();
-//            }
-//        });
-//        mTextView_placeReviews.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                setTextColor();
-//                mTextView_placeReviews.setTextColor(Color.parseColor("#3cb963"));
-//                recycle_view_foodMenu.setVisibility(View.GONE);
-//                recycle_view_foodReviews.setVisibility(View.VISIBLE);
-//                foodReviews();
-//            }
-//        });
-
-
-
+        view_foodMenu.setVisibility(View.VISIBLE);
+        new LoadPlaceDetail().execute(sp.getToken(), String.valueOf(id));
+        listDataHeader = new ArrayList<String>();
     }
 
     private void init() {
         mTextView_foodMenu = (TextView) findViewById(R.id.text_view_foodMenu);
         mTextView_placeDetails = (TextView) findViewById(R.id.text_view_placeDetail);
         mTextView_placeReviews = (TextView) findViewById(R.id.text_view_placeReviews);
-        recycle_view_foodMenu = (RecyclerView) findViewById(R.id.recycle_view_foodMenu);
+        //expandable list
+        scroll_view_menu = (ScrollView) findViewById(R.id.scroll_view_menu);
+        scroll_view_detail = (ScrollView) findViewById(R.id.scroll_view_detail);
+        expandable_lv_foodMenu = (ExpandableListView) findViewById(R.id.expandable_lv_foodMenu);
+        //details
+
+        //recycleView
         recycle_view_foodReviews = (RecyclerView) findViewById(R.id.recycle_view_foodReviews);
-        image_view_photo_detail = (ImageView) findViewById(R.id.image_view_photo_detail);
+        image_view_photo_detail = (ImageView) findViewById(R.id.image_view_photo_details);
         button_ready_detail = (Button) findViewById(R.id.button_ready_detail);
         text_view_name_detail = (TextView) findViewById(R.id.text_view_name_detail);
         image_view_back_detail = (ImageView) findViewById(R.id.image_view_back_detail);
+        view_foodMenu = findViewById(R.id.view_foodMenu);
+        view_details = findViewById(R.id.view_placeDetail);
+        view_placeReviews = findViewById(R.id.view_placeReviews);
+        //setonClick
+        mTextView_foodMenu.setOnClickListener(this);
+        mTextView_placeDetails.setOnClickListener(this);
+        mTextView_placeReviews.setOnClickListener(this);
+        button_ready_detail.setOnClickListener(this);
+        image_view_back_detail.setOnClickListener(this);
 
         //setonClick
         button_ready_detail.setOnClickListener(this);
         image_view_back_detail.setOnClickListener(this);
     }
 
-    private void setTextColor() {
+    private void setDefaultView() {
         mTextView_foodMenu.setTextColor(Color.BLACK);
         mTextView_placeDetails.setTextColor(Color.BLACK);
         mTextView_placeReviews.setTextColor(Color.BLACK);
+        //view
+        view_foodMenu.setVisibility(View.INVISIBLE);
+        view_details.setVisibility(View.INVISIBLE);
+        view_placeReviews.setVisibility(View.INVISIBLE);
+        //expandable list
+        scroll_view_menu.setVisibility(View.GONE);
+        scroll_view_detail.setVisibility(View.GONE);
+        expandable_lv_foodMenu.setVisibility(View.GONE);
+        //recycleView
+        recycle_view_foodReviews.setVisibility(View.GONE);
+    }
+    private void foodMenu(){
+        listDataChild = new HashMap<String, List<FoodMenu>>();
+        for (int i=0; i< listDataHeader.size(); i++){
+            listDataChild.put(listDataHeader.get(i), list_test.get(listDataHeader.get(i)));
+        }
+        expandalelist_Adapter = new ExpanlistFoodMenuAdapter(this, listDataHeader, listDataChild);
+        // setting list adapter
+        expandable_lv_foodMenu.setAdapter(expandalelist_Adapter);
+        expandable_lv_foodMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+//                list_item = new ArrayList<FoodMenu>();
+//                for (int i=0;i<list_food_menu.size(); i++){
+//                    if (list_food_menu.get(i).getCategory_id() == groupPosition+1){
+//
+//                        FoodMenu foodmenu = new FoodMenu(
+//                                list_food_menu.get(i).getId(),
+//                                list_food_menu.get(i).getName(),
+//                                list_food_menu.get(i).getDescription(),
+//                                list_food_menu.get(i).getPhoto(),
+//                                list_food_menu.get(i).getPrice(),
+//                                list_food_menu.get(i).getType(),
+//                                list_food_menu.get(i).getStatus(),
+//                                list_food_menu.get(i).getCategory_id()
+//                        );
+//                        list_item.add(foodmenu);
+//                    }
+//                }
+//                list_food_menu.clear();
+//                for (int i=0;i<list_item.size(); i++){
+//                    FoodMenu foodmenu = new FoodMenu(
+//                            list_item.get(i).getId(),
+//                            list_item.get(i).getName(),
+//                            list_item.get(i).getDescription(),
+//                            list_item.get(i).getPhoto(),
+//                            list_item.get(i).getPrice(),
+//                            list_item.get(i).getType(),
+//                            list_item.get(i).getStatus(),
+//                            list_item.get(i).getCategory_id()
+//                    );
+//                    list_food_menu.add(foodmenu);
+//                    Log.d(TAG, list_item.get(i).getName());
+//                }
+//                expandalelist_Adapter.notifyDataSetChanged();
+                return false;
+            }
+        });
     }
 
-    private void foodMenu() {
-        mPlaceFoodMenuList = new ArrayList<>();
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+    private void foodDetails() {
 
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
-        mPlaceFoodMenuList.add(new PLaceFoodMenu("Cơm niêu Sing chỉ từ 59K", "Tận hưởng điều hòa mát rượi trốn nóng với Cơm niêu Sing chỉ từ 59K tại hệ thống nhà hàng Kombo", 59));
+        String address = getIntent().getExtras().getString("address");
+        String phone = getIntent().getExtras().getString("phone");
+        String email = getIntent().getExtras().getString("email");
+        String price = getIntent().getExtras().getString("price");
+        String time_open = getIntent().getExtras().getString("time_open");
+        String time_close = getIntent().getExtras().getString("time_close");
+        String wifi = getIntent().getExtras().getString("wifi");
+        String description = getIntent().getExtras().getString("description");
+        //detail
 
-        mPlaceFoodMenuAdapter = new PlaceFoodMenuAdapter(this, mPlaceFoodMenuList);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        recycle_view_foodMenu.setLayoutManager(linearLayoutManager);
-
-        recycle_view_foodMenu.addItemDecoration(new DrawsLineItem(this, LinearLayoutManager.VERTICAL));
-        recycle_view_foodMenu.setAdapter(mPlaceFoodMenuAdapter);
     }
+
     private void foodReviews() {
         mPlaceFoodReviewsList = new ArrayList<>();
         mPlaceFoodReviewsList.add(new PlaceFoodReviews("Phan Kim Lien", "July 20th, 2016", "Mình đi ăn cũng lâu lâu rồi nên ko nhớ tên món nữa. Nhưng ốc ở đây siêu tươi ngon, ốc dai, béo, chế biến sạch sẽ và rất thơm ngon"));
@@ -213,6 +252,28 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             case R.id.image_view_back_detail:
                 finish();
                 break;
+            case R.id.text_view_foodMenu:
+                setDefaultView();
+                mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
+                scroll_view_detail.setVisibility(View.VISIBLE);
+                expandable_lv_foodMenu.setVisibility(View.VISIBLE);
+                view_foodMenu.setVisibility(View.VISIBLE);
+                foodMenu();
+                break;
+            case R.id.text_view_placeDetail:
+                setDefaultView();
+                mTextView_placeDetails.setTextColor(Color.parseColor("#3cb963"));
+                scroll_view_detail.setVisibility(View.VISIBLE);
+                view_details.setVisibility(View.VISIBLE);
+                foodDetails();
+                break;
+            case R.id.text_view_placeReviews:
+                setDefaultView();
+                mTextView_placeReviews.setTextColor(Color.parseColor("#3cb963"));
+                recycle_view_foodReviews.setVisibility(View.VISIBLE);
+                view_placeReviews.setVisibility(View.VISIBLE);
+                foodReviews();
+                break;
         }
     }
 
@@ -221,7 +282,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            showProgressDialog("Please wait...");
+            showProgressDialog();
         }
 
         @Override
@@ -248,7 +309,9 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                             JSONObject menu = data.getJSONObject(i);
                             //data category_name: Gỏi & salad,Món ăn nhẹ,Sashimi...
                             String category_name = menu.getString("category_name");
+                            listDataHeader.add(category_name);
                             JSONArray products = menu.getJSONArray("products");
+                            List<FoodMenu> list_test2 = new ArrayList<>();
                             //get array in product
                             for ( int j = 0; j<products.length(); j++){
                                 JSONObject item = products.getJSONObject(j);
@@ -260,10 +323,14 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                 String type = item.getString("type");
                                 String status_menu = item.getString("status");
                                 int category_id = item.getInt("category_id");
-                                Log.d(TAG, id +"+"+name);
+                                FoodMenu foodmenu = new FoodMenu(
+                                        id, name, description, photo, price, type, status_menu, category_id
+                                );
+                                list_test2.add(foodmenu);
                             }
-                            Log.d(TAG, category_name +"");
+                            list_test.put(category_name, list_test2);
                         }
+                        foodMenu();
                     }else if (status == 405){
                         Toasty.error(PlaceDetailActivity.this, "Load data error!", Toast.LENGTH_SHORT).show();
                     }else{
@@ -296,7 +363,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     @Override
     public void onDirectionFinderSuccess(List<Route> routes) {
         for(Route route: routes){
-            button_ready_detail.setText(route.duration.text);
+            button_ready_detail.setText("Cách đây: "+ route.duration.text.split(" ")[0] +" phút");
         }
     }
 }

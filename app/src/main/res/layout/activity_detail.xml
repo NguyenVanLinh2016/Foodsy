@@ -52,9 +52,69 @@
                     android:text="@string/app_name"
                     android:textAllCaps="false"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="18dip"
-                    android:layout_marginBottom="@dimen/margin_8dp"/>
+                    android:textSize="18dip"/>
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorWhite">
+                <TextView
+                    android:id="@+id/text_view_foodMenu"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:gravity="left"
+                    android:text="@string/food_menu"
+                    android:paddingLeft="@dimen/margin_8dp"
+                    />
+                <TextView
+                    android:id="@+id/text_view_placeDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="38dp"
+                    android:layout_weight="1"
+                    android:text="@string/place_detail"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/text_view_placeReviews"
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:gravity="right"
+                    android:text="@string/place_review"
+                    android:paddingRight="@dimen/margin_8dp"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@color/colorWhite">
+                <View
+                    android:id="@+id/view_foodMenu"
+                    android:layout_width="0dp"
+                    android:layout_height="1.5dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:visibility="invisible"/>
+                <View
+                    android:id="@+id/view_placeDetail"
+                    android:layout_width="0dp"
+                    android:layout_height="1.5dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:visibility="invisible"/>
+                <View
+                    android:id="@+id/view_placeReviews"
+                    android:layout_width="0dp"
+                    android:layout_height="1.5dp"
+                    android:layout_weight="1"
+                    android:background="@color/colorPrimary"
+                    android:visibility="invisible"/>
+            </LinearLayout>
+            <View
+                android:layout_width="0dp"
+                android:layout_height="0.5dp"
+                android:layout_weight="1"
+                android:background="@color/colorPrimary" />
         </android.support.design.widget.AppBarLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -64,42 +124,31 @@
             android:paddingTop="10dp"
             android:background="@color/colorWhite"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <TextView
-                    android:id="@+id/text_view_foodMenu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:gravity="left"
-                    android:text="@string/food_menu"
-                    android:paddingLeft="@dimen/margin_8dp"/>
-                <TextView
-                    android:id="@+id/text_view_placeReviews"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
-                    android:layout_weight="1"
-                    android:text="@string/place_review"
-                    android:gravity="center"/>
 
-                <TextView
-                    android:id="@+id/text_view_placeDetail"
-                    android:layout_width="wrap_content"
-                    android:layout_height="30dp"
-                    android:gravity="right"
-                    android:text="@string/place_detail"
-                    android:paddingRight="@dimen/margin_8dp"/>
-            </LinearLayout>
+            <ScrollView
+                android:id="@+id/scroll_view_menu"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:visibility="gone">
+                <ExpandableListView
+                    android:id="@+id/expandable_lv_foodMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:visibility="gone"
+                    android:layout_marginBottom="@dimen/margin_16dp"/>
+            </ScrollView>
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycle_view_foodMenu"
+                android:id="@+id/recycle_view_foodDetails"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-            </android.support.v7.widget.RecyclerView>
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycle_view_foodReviews"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
         </LinearLayout>
-
-        <!--<include layout="@layout/content_place_detail" /> -->
 
     </android.support.design.widget.CoordinatorLayout>
 </LinearLayout>

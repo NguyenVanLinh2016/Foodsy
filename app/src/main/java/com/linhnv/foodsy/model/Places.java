@@ -10,6 +10,7 @@ public class Places {
     private String description;
     private String address;
     private String city;
+    private String phone_number;
     private String email;
     private String photo;
     private String price_limit;
@@ -31,14 +32,25 @@ public class Places {
         this.city = city;
     }
 
+    public Places(String address, String phone_number, String email, String price_limit, String time_open, String time_close, String wifi_password, String description){
+        this.address = address;
+        this.phone_number = phone_number;
+        this.price_limit = price_limit;
+        this.time_open = time_open;
+        this.time_close = time_close;
+        this.wifi_password = wifi_password;
+        this.description = description;
+    }
+
     public Places(int id, String display_name, String description, String address,
-                  String city, String email, String photo, String price_limit, String time_open, String time_close,
+                  String city, String phone_number, String email, String photo, String price_limit, String time_open, String time_close,
                   String wifi_password, Double latitude, Double longitude, String status, int user_id) {
         this.id = id;
         this.display_name = display_name;
         this.description = description;
         this.address = address;
         this.city = city;
+        this.phone_number = phone_number;
         this.email = email;
         this.photo = photo;
         this.price_limit = price_limit;
@@ -91,6 +103,14 @@ public class Places {
 
     public void setCity(String city) {
         this.city = city;
+    }
+
+    public String getPhone_number() {
+        return phone_number;
+    }
+
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public String getEmail() {
