@@ -125,19 +125,18 @@
             android:background="@color/colorWhite"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <ScrollView
+            <RelativeLayout
                 android:id="@+id/scroll_view_menu"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:visibility="gone">
+                android:visibility="visible"
+                android:paddingBottom="@dimen/margin_32dp">
                 <ExpandableListView
                     android:id="@+id/expandable_lv_foodMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"
-                    android:layout_marginBottom="@dimen/margin_16dp"/>
-            </ScrollView>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"/>
+            </RelativeLayout>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycle_view_foodDetails"
                 android:layout_width="match_parent"

@@ -35,6 +35,7 @@ public class Places {
     public Places(String address, String phone_number, String email, String price_limit, String time_open, String time_close, String wifi_password, String description){
         this.address = address;
         this.phone_number = phone_number;
+        this.email = email;
         this.price_limit = price_limit;
         this.time_open = time_open;
         this.time_close = time_close;

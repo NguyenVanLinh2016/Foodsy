@@ -97,12 +97,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
         new LoadPlaceAround().execute(sp.getToken(), String.valueOf(latitude), String.valueOf(longitude));
         mMapView = (MapView) view.findViewById(R.id.map_main);
         mMapView.onCreate(savedInstanceState);
-        return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
         mMapView.onResume();
         try {
             MapsInitializer.initialize(getActivity().getApplicationContext());
@@ -116,21 +110,28 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                 LatLng syndey = new LatLng(latitude, longitude);
                 googleMap.addMarker(new MarkerOptions().position(syndey).icon(BitmapDescriptorFactory.fromResource(R.drawable.mylocationgif)));
 
-                Log.d("TEST", listPlace.size() +"--");
-                for ( int j=0; j<listPlace.size(); j++ ){
-                    Log.d("TEST", listPlace.get(j).getId() +"");
-                    googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
-                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .title(listPlace.get(j).getDisplay_name()));
-                    //marker.showInfoWindow();
-                    //createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
-                }
+//                Log.d("TEST", listPlace.size() +"--");
+//                for ( int j=0; j<listPlace.size(); j++ ){
+//                    Log.d("TEST", listPlace.get(j).getId() +"");
+//                    googleMap.addMarker(new MarkerOptions()
+//                            .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
+//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+//                            .title(listPlace.get(j).getDisplay_name()));
+//                    //marker.showInfoWindow();
+//                    //createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
+//                }
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(syndey).zoom(16).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
             }
         });
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
     }
 
     @Override
@@ -242,7 +243,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                             place.setLongitude(longitude);
                             listPlace.add(place);
                         }
-                        //addListMaker();
+                        addListMaker();
                     }
                     hideProgressDialog();
                 } catch (JSONException e) {
@@ -263,8 +264,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                             .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                             .title(listPlace.get(j).getDisplay_name()));
-                    //marker.showInfoWindow();
-                    //createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
                 }
                 mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
                 {
@@ -277,7 +276,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                     }
 
                 });
-                //mGoogleMap.setOnInfoWindowClickListener((GoogleMap.OnInfoWindowClickListener) getActivity());
                 onInfoWindowClick(marker);
             }
         });

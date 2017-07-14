@@ -38,7 +38,14 @@ public class PlaceDetailMenuAdapter extends RecyclerView.Adapter<PlaceDetailMenu
 
     @Override
     public void onBindViewHolder(PlaceDetailsMenuViewHolder holder, int position) {
-
+        Places places = mListPlaceFoodMenu.get(position);
+        holder.text_address.setText(places.getAddress());
+        holder.text_phone_detail.setText(places.getPhone_number());
+        holder.text_email_detail.setText(places.getEmail());
+        holder.text_price_detail.setText(places.getPrice_limit());
+        holder.text_time_detail.setText(places.getTime_open() +" - "+ places.getTime_close());
+        holder.text_wifi_detail.setText(places.getWifi_password());
+        holder.text_des_detail.setText(places.getDescription());
     }
 
     @Override
@@ -48,7 +55,7 @@ public class PlaceDetailMenuAdapter extends RecyclerView.Adapter<PlaceDetailMenu
 
     class PlaceDetailsMenuViewHolder extends RecyclerView.ViewHolder{
 
-        TextView text_address, text_phone_detail, text_email_detail, text_price_detail, text_time_detail, text_des_detail;
+        TextView text_address, text_phone_detail, text_email_detail, text_price_detail, text_time_detail, text_wifi_detail, text_des_detail;
         public PlaceDetailsMenuViewHolder(View itemView) {
             super(itemView);
 
@@ -56,8 +63,8 @@ public class PlaceDetailMenuAdapter extends RecyclerView.Adapter<PlaceDetailMenu
             text_phone_detail = (TextView) itemView.findViewById(R.id.text_view_phone_detail);
             text_email_detail = (TextView) itemView.findViewById(R.id.text_view_email_detail);
             text_price_detail = (TextView) itemView.findViewById(R.id.text_view_price_detail);
-            text_email_detail = (TextView) itemView.findViewById(R.id.text_view_time_detail);
-            text_time_detail = (TextView) itemView.findViewById(R.id.text_view_email_detail);
+            text_time_detail = (TextView) itemView.findViewById(R.id.text_view_time_detail);
+            text_wifi_detail = (TextView) itemView.findViewById(R.id.text_view_wifi_detail);
             text_des_detail = (TextView) itemView.findViewById(R.id.text_view_des_detail);
         }
     }

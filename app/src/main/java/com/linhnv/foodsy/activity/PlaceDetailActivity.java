@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -47,9 +48,9 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private TextView mTextView_foodMenu;
     private TextView mTextView_placeDetails;
     private TextView mTextView_placeReviews;
+    private RecyclerView recycle_view_foodDetails;
     private RecyclerView recycle_view_foodReviews;
-    private ScrollView scroll_view_menu;
-    private ScrollView scroll_view_detail;
+    private RelativeLayout scroll_view_menu;
     private ExpandableListView expandable_lv_foodMenu;
     private ExpanlistFoodMenuAdapter expandalelist_Adapter;
     private List<String> listDataHeader;
@@ -65,7 +66,8 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private ImageView image_view_back_detail;
 
     private List<PlaceFoodReviews> mPlaceFoodReviewsList;
-
+    private List<Places> mPlaceDetailsList;
+    private PlaceDetailMenuAdapter mPlaceFoodDetailAdapter;
     private PlaceFoodReviewsAdapter mPlaceFoodReviewsAdapter;
 
     private String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
@@ -107,7 +109,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         sendRequest(origin, destination);
 
         mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-        scroll_view_menu.setVisibility(View.VISIBLE);
+        //RelativeLayout.setVisibility(View.VISIBLE);
         expandable_lv_foodMenu.setVisibility(View.VISIBLE);
 
         view_foodMenu.setVisibility(View.VISIBLE);
@@ -120,12 +122,13 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         mTextView_placeDetails = (TextView) findViewById(R.id.text_view_placeDetail);
         mTextView_placeReviews = (TextView) findViewById(R.id.text_view_placeReviews);
         //expandable list
-        scroll_view_menu = (ScrollView) findViewById(R.id.scroll_view_menu);
-        scroll_view_detail = (ScrollView) findViewById(R.id.scroll_view_detail);
+        scroll_view_menu = (RelativeLayout) findViewById(R.id.scroll_view_menu);
+        //scroll_view_detail = (ScrollView) findViewById(R.id.scroll_view_detail);
         expandable_lv_foodMenu = (ExpandableListView) findViewById(R.id.expandable_lv_foodMenu);
         //details
 
         //recycleView
+        recycle_view_foodDetails = (RecyclerView) findViewById(R.id.recycle_view_foodDetails);
         recycle_view_foodReviews = (RecyclerView) findViewById(R.id.recycle_view_foodReviews);
         image_view_photo_detail = (ImageView) findViewById(R.id.image_view_photo_details);
         button_ready_detail = (Button) findViewById(R.id.button_ready_detail);
@@ -156,9 +159,9 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         view_placeReviews.setVisibility(View.INVISIBLE);
         //expandable list
         scroll_view_menu.setVisibility(View.GONE);
-        scroll_view_detail.setVisibility(View.GONE);
         expandable_lv_foodMenu.setVisibility(View.GONE);
         //recycleView
+        recycle_view_foodDetails.setVisibility(View.GONE);
         recycle_view_foodReviews.setVisibility(View.GONE);
     }
     private void foodMenu(){
@@ -167,44 +170,22 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             listDataChild.put(listDataHeader.get(i), list_test.get(listDataHeader.get(i)));
         }
         expandalelist_Adapter = new ExpanlistFoodMenuAdapter(this, listDataHeader, listDataChild);
+        expandable_lv_foodMenu.setTranscriptMode(ExpandableListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        expandable_lv_foodMenu.setStackFromBottom(true);
         // setting list adapter
         expandable_lv_foodMenu.setAdapter(expandalelist_Adapter);
         expandable_lv_foodMenu.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
-//                list_item = new ArrayList<FoodMenu>();
-//                for (int i=0;i<list_food_menu.size(); i++){
-//                    if (list_food_menu.get(i).getCategory_id() == groupPosition+1){
-//
-//                        FoodMenu foodmenu = new FoodMenu(
-//                                list_food_menu.get(i).getId(),
-//                                list_food_menu.get(i).getName(),
-//                                list_food_menu.get(i).getDescription(),
-//                                list_food_menu.get(i).getPhoto(),
-//                                list_food_menu.get(i).getPrice(),
-//                                list_food_menu.get(i).getType(),
-//                                list_food_menu.get(i).getStatus(),
-//                                list_food_menu.get(i).getCategory_id()
-//                        );
-//                        list_item.add(foodmenu);
-//                    }
-//                }
-//                list_food_menu.clear();
-//                for (int i=0;i<list_item.size(); i++){
-//                    FoodMenu foodmenu = new FoodMenu(
-//                            list_item.get(i).getId(),
-//                            list_item.get(i).getName(),
-//                            list_item.get(i).getDescription(),
-//                            list_item.get(i).getPhoto(),
-//                            list_item.get(i).getPrice(),
-//                            list_item.get(i).getType(),
-//                            list_item.get(i).getStatus(),
-//                            list_item.get(i).getCategory_id()
-//                    );
-//                    list_food_menu.add(foodmenu);
-//                    Log.d(TAG, list_item.get(i).getName());
-//                }
-//                expandalelist_Adapter.notifyDataSetChanged();
+
+                return false;
+            }
+        });
+        expandable_lv_foodMenu.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                Toast.makeText(PlaceDetailActivity.this, ""+listDataHeader.get(groupPosition) +" : "+
+                        listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition).getName(), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -221,6 +202,12 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         String wifi = getIntent().getExtras().getString("wifi");
         String description = getIntent().getExtras().getString("description");
         //detail
+        mPlaceDetailsList = new ArrayList<>();
+        mPlaceDetailsList.add(new Places(address, phone, email, price, time_open, time_close, wifi, description));
+        mPlaceFoodDetailAdapter = new PlaceDetailMenuAdapter(this, mPlaceDetailsList);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recycle_view_foodDetails.setLayoutManager(linearLayoutManager);
+        recycle_view_foodDetails.setAdapter(mPlaceFoodDetailAdapter);
 
     }
 
@@ -255,7 +242,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             case R.id.text_view_foodMenu:
                 setDefaultView();
                 mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-                scroll_view_detail.setVisibility(View.VISIBLE);
+                scroll_view_menu.setVisibility(View.VISIBLE);
                 expandable_lv_foodMenu.setVisibility(View.VISIBLE);
                 view_foodMenu.setVisibility(View.VISIBLE);
                 foodMenu();
@@ -263,7 +250,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             case R.id.text_view_placeDetail:
                 setDefaultView();
                 mTextView_placeDetails.setTextColor(Color.parseColor("#3cb963"));
-                scroll_view_detail.setVisibility(View.VISIBLE);
+                recycle_view_foodDetails.setVisibility(View.VISIBLE);
                 view_details.setVisibility(View.VISIBLE);
                 foodDetails();
                 break;
