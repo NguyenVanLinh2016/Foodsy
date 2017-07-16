@@ -71,28 +71,6 @@ public class HomeFragment extends BaseFragment {
     private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/category/drink";
     private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/category/entertain";
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        placeList = new ArrayList<>();
-        sp = new SP(getContext());
-        Log.d("User info", sp.getUser());
-        Intent i = getActivity().getIntent();
-        Bundle b = i.getExtras();
-
-        int url_eat = b.getInt("eat");
-        if (url_eat == 0) {
-            url_places = url_place_eat;
-        } else if (url_eat == 1) {
-            url_places = url_place_entertain;
-        } else if (url_eat == 2) {
-            url_places = url_place_drink;
-        }
-        String token = sp.getToken();
-        Log.d(TAG, "tokenHome: "+ token);
-        new GetEatInfo().execute(String.valueOf(sp.getLatitude()), String.valueOf(sp.getLongitude()), token);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -198,9 +176,9 @@ public class HomeFragment extends BaseFragment {
                                 places.setTime_open(time_open);
                                 places.setTime_close(time_close);
                                 places.setWifi_password(wifi_password);
-                                places.setMinutes(String.valueOf(sochan));
+                                places.setCity(String.valueOf(sochan));
                                 places.setPhoto(url);
-                                places.setDescription(description);
+                                Log.d(TAG, places.toString());
                                 Log.d("img", url.toString());
                                 // adding contact to contact list
                                 placeList.add(places);
@@ -231,5 +209,22 @@ public class HomeFragment extends BaseFragment {
     @Override
     public void onStart() {
         super.onStart();
+        placeList = new ArrayList<>();
+        sp = new SP(getContext());
+        Log.d("User info", sp.getUser());
+        Intent i = getActivity().getIntent();
+        Bundle b = i.getExtras();
+
+        int url_eat = b.getInt("eat");
+        if (url_eat == 0) {
+            url_places = url_place_eat;
+        } else if (url_eat == 1) {
+            url_places = url_place_entertain;
+        } else if (url_eat == 2) {
+            url_places = url_place_drink;
+        }
+        String token = sp.getToken();
+        Log.d(TAG, "tokenHome: "+ token);
+        new GetEatInfo().execute(String.valueOf(sp.getLatitude()), String.valueOf(sp.getLongitude()), token);
     }
 }

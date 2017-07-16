@@ -20,8 +20,7 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="Cài đặt" />
     </group>
-
-    <item android:title="Communicate">
+    <group android:checkableBehavior="single">
         <menu>
             <item
                 android:id="@+id/nav_share"
@@ -34,8 +33,18 @@
             <item
                 android:id="@+id/nav_register_admin"
                 android:icon="@drawable/ic_face_black_24dp"
-                android:title="Đăng ký chủ nhà hàng" />
+                android:title="Đăng ký chủ nhà hàng"
+                android:visible="true" />
+            <item
+                android:id="@+id/nav_owner"
+                android:icon="@drawable/ic_face_black_24dp"
+                android:title="Quản lý Owner"
+                android:visible="true" />
+            <item
+                android:id="@+id/nav_admin"
+                android:icon="@drawable/ic_face_black_24dp"
+                android:title="Quản lý Admin"
+                android:visible="true" />
         </menu>
-    </item>
-
+    </group>
 </menu>

@@ -11,8 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.fragment.HomeFragment;
@@ -20,6 +23,12 @@ import com.linhnv.foodsy.fragment.MapFragment;
 import com.linhnv.foodsy.fragment.NotificationFragment;
 import com.linhnv.foodsy.fragment.BookmarkFragment;
 import com.linhnv.foodsy.fragment.ViewPagerAdapter;
+import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.model.User;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -27,6 +36,11 @@ public class HomeActivity extends AppCompatActivity
     private BottomNavigationView bottomNavigation;
     private ViewPager viewPager;
     private MenuItem menuItem;
+    private SP sp;
+    NavigationView navigationView;
+    Toolbar toolbar;
+    TextView txtNameUser, txtEmailUser;
+    String username, display_name, email, phone_number, address, gender, role, status;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -53,12 +67,14 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        init();
+        sp = new SP(this);
+
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.app_name);
         }
-        init();
+
         int s = getIntent().getExtras().getInt("eat");
 
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
@@ -94,14 +110,89 @@ public class HomeActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        try {
+            getUser();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        checkRoleUser();
 
     }
 
     private void init() {
         bottomNavigation = (BottomNavigationView) findViewById(R.id.navigationBottom);
         viewPager = (ViewPager) findViewById(R.id.viewPager1);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+    }
+
+    private void getUser() throws JSONException {
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        String user = sp.getUser();
+        JSONObject root = new JSONObject(user);
+
+        txtNameUser = (TextView) header.findViewById(R.id.txtNameUser);
+        txtEmailUser = (TextView) header.findViewById(R.id.txtEmailUser);
+        JSONObject jsonObject = root.getJSONObject("data");
+        User u = new User();
+        username = jsonObject.getString("username");
+        display_name = jsonObject.getString("display_name");
+        email = jsonObject.getString("email");
+        phone_number = jsonObject.getString("phone_number");
+        address = jsonObject.getString("address");
+        gender = jsonObject.getString("gender");
+        role = jsonObject.getString("role");
+        status = jsonObject.getString("status");
+
+        u.setUsername(username);
+        u.setDisplay_name(display_name);
+        u.setEmail(email);
+        u.setPhone_number(phone_number);
+        u.setAddress(address);
+        u.setGender(gender);
+        u.setRole(role);
+        u.setStatus(status);
+
+        if (email == null) {
+            txtNameUser.setText(username);
+            txtEmailUser.setText("no email register");
+        } else {
+            txtNameUser.setText(username);
+            txtEmailUser.setText(email);
+        }
+
+    }
+
+    private void checkRoleUser() {
+        Log.e("role", role);
+        navigationView.setNavigationItemSelectedListener(this);
+        Menu menu  = navigationView.getMenu();
+        MenuItem owner, admin, user;
+
+        if (role.equals("owner")) {
+            owner = menu.findItem(R.id.nav_owner);
+            owner.setVisible(true);
+            admin = menu.findItem(R.id.nav_admin);
+            admin.setVisible(false);
+            user = menu.findItem(R.id.nav_register_admin);
+            user.setVisible(false);
+        }else if (role.equals("admin")) {
+            owner = menu.findItem(R.id.nav_owner);
+            owner.setVisible(false);
+            admin = menu.findItem(R.id.nav_admin);
+            admin.setVisible(true);
+            user = menu.findItem(R.id.nav_register_admin);
+            user.setVisible(false);
+        }else {
+            owner = menu.findItem(R.id.nav_owner);
+            owner.setVisible(false);
+            admin = menu.findItem(R.id.nav_admin);
+            admin.setVisible(false);
+            user = menu.findItem(R.id.nav_register_admin);
+            user.setVisible(true);
+        }
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -159,8 +250,12 @@ public class HomeActivity extends AppCompatActivity
 
         } else if (id == R.id.nav_send) {
 
-        }else if (id == R.id.nav_register_admin){
+        } else if (id == R.id.nav_register_admin) {
             startActivity(new Intent(HomeActivity.this, RegisterOwnerActivity.class));
+        } else if (id == R.id.nav_owner) {
+            startActivity(new Intent(HomeActivity.this, PlacesOwnerActivity.class));
+        } else if (id == R.id.nav_admin) {
+            startActivity(new Intent(HomeActivity.this, AdminActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -229,7 +229,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                     startActivity(new Intent(UpdateInfoActivity.this, MenuActivity.class));
                     finish();
                     Toasty.success(UpdateInfoActivity.this, "Update info successful!", Toast.LENGTH_SHORT).show();
-                    new GetUserInfo().execute();
                 } else {
                     Toasty.success(UpdateInfoActivity.this, "Update fail!", Toast.LENGTH_SHORT).show();
                 }
@@ -263,61 +262,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                     ")+"
     );
 
-    public class GetUserInfo extends AsyncTask<Void, Void, Void> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            HttpHandler sh = new HttpHandler();
-
-            // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_user + "?token=" + token.toString());
-            Log.e(TAG, "Response from url: " + jsonStr);
-
-            if (jsonStr != null) {
-                try {
-                    JSONObject jsonObj = new JSONObject(jsonStr);
-
-                    // Getting JSON Array node
-                    JSONArray eat = jsonObj.getJSONArray("data");
-
-                    // looping through All Contacts
-                    sp.setUser(eat.toString());
-                    Toast.makeText(UpdateInfoActivity.this, eat.toString(), Toast.LENGTH_LONG).show();
-
-                } catch (final JSONException e) {
-                    Log.e(TAG, "Json parsing error: " + e.getMessage());
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getApplicationContext(),
-                                    "Json parsing error: " + e.getMessage(),
-                                    Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    });
-
-                }
-            } else {
-                Log.e(TAG, "Couldn't get json from server.");
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(getApplicationContext(),
-                                "Couldn't get json from server. Check LogCat for possible errors!",
-                                Toast.LENGTH_LONG)
-                                .show();
-                    }
-                });
-
-            }
-
-            return null;
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -329,7 +273,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
             public void onClick(DialogInterface dialog, int which) {
                 sp.setStateLogin(true);
                 startActivity(new Intent(UpdateInfoActivity.this, MenuActivity.class));
-                new GetUserInfo().execute();
                 finish();
             }
         });

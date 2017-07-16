@@ -459,7 +459,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //showProgressDialog("Athencation...");
         }
 
         @Override
@@ -476,9 +475,12 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             hideProgressDialog();
             try {
                 JSONObject root = new JSONObject(result);
+                sp.setUser(root.toString());
+                Log.d("get user admin", root.toString());
                 int status = root.getInt("status");
                 if (status == 200){
                     JSONObject jsonObject = root.getJSONObject("data");
+
                     String gender = jsonObject.getString("gender");
                     sp.setToken(token);
                     if (gender.equalsIgnoreCase("n")){
