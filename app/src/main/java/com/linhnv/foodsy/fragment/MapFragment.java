@@ -93,7 +93,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-         init();
+        init();
         mMapView = (MapView) view.findViewById(R.id.map_main);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
