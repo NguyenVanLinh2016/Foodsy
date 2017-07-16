@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="40dp">
@@ -30,13 +31,18 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:gravity="center"/>
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+            <com.andremion.counterfab.CounterFab
+                android:id="@+id/image_view_cart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/shoppingcart"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_centerVertical="true"/>
+                android:layout_centerVertical="true"
+                app:layout_anchorGravity="bottom|end"
+                app:backgroundTint="@null"
+                android:background="@null"
+                android:scaleType="centerCrop"/>
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

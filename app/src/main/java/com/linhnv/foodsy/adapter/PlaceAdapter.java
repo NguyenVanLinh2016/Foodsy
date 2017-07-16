@@ -48,7 +48,7 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.PlaceViewHol
         Places place = placeList.get(position);
         holder.txtName_Res.setText(place.getDisplay_name());
         holder.txtName_Food.setText(place.getAddress());
-        holder.txtAgo.setText("Cách đây " + place.getCity()+ " phút");
+        holder.txtAgo.setText("Cách đây " + place.getMinutes()+ " phút");
         Picasso.with(context)
                 .load(place.getPhoto())
                 .placeholder(R.drawable.bglogin5)

@@ -21,6 +21,7 @@ public class Places {
     private Double longitude;
     private String status;
     private int user_id;
+    private String minutes;
 
     public Places() {
     }
@@ -43,9 +44,7 @@ public class Places {
         this.description = description;
     }
 
-    public Places(int id, String display_name, String description, String address,
-                  String city, String phone_number, String email, String photo, String price_limit, String time_open, String time_close,
-                  String wifi_password, Double latitude, Double longitude, String status, int user_id) {
+    public Places(int id, String display_name, String description, String address, String city, String phone_number, String email, String photo, String price_limit, String time_open, String time_close, String wifi_password, Double latitude, Double longitude, String status, int user_id) {
         this.id = id;
         this.display_name = display_name;
         this.description = description;
@@ -64,7 +63,25 @@ public class Places {
         this.user_id = user_id;
     }
 
-
+    public Places(int id, String display_name, String description, String address, String city, String phone_number, String email, String photo, String price_limit, String time_open, String time_close, String wifi_password, Double latitude, Double longitude, String status, int user_id, String minutes) {
+        this.id = id;
+        this.display_name = display_name;
+        this.description = description;
+        this.address = address;
+        this.city = city;
+        this.phone_number = phone_number;
+        this.email = email;
+        this.photo = photo;
+        this.price_limit = price_limit;
+        this.time_open = time_open;
+        this.time_close = time_close;
+        this.wifi_password = wifi_password;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.status = status;
+        this.user_id = user_id;
+        this.minutes = minutes;
+    }
 
     public int getId() {
         return id;
@@ -194,5 +211,11 @@ public class Places {
         this.user_id = user_id;
     }
 
+    public String getMinutes() {
+        return minutes;
+    }
 
+    public void setMinutes(String minutes) {
+        this.minutes = minutes;
+    }
 }

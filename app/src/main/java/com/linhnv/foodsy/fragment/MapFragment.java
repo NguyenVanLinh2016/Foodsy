@@ -2,6 +2,7 @@ package com.linhnv.foodsy.fragment;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -30,6 +31,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.gson.Gson;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.activity.BaseActivity;
+import com.linhnv.foodsy.activity.PlaceDetailActivity;
 import com.linhnv.foodsy.activity.SignInActivity;
 import com.linhnv.foodsy.model.DirectionFinderListener;
 import com.linhnv.foodsy.model.Place;
@@ -62,7 +64,7 @@ import static com.facebook.login.widget.ProfilePictureView.TAG;
  * Created by linhnv on 21/05/2017.
  */
 
-public class MapFragment extends BaseFragment implements DirectionFinderListener, GoogleMap.OnInfoWindowClickListener {
+public class MapFragment extends BaseFragment implements DirectionFinderListener, GoogleMap.OnInfoWindowClickListener{
     GoogleMap mGoogleMap;
     private MapView mMapView;
     private SP sp;
@@ -82,7 +84,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
         listPlace = new ArrayList<>();
         latitude = sp.getLatitude();
         longitude = sp.getLongitude();
-
+        new LoadPlaceAround().execute(sp.getToken(), String.valueOf(latitude), String.valueOf(longitude));
     }
 
     @Override
@@ -94,7 +96,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        new LoadPlaceAround().execute(sp.getToken(), String.valueOf(latitude), String.valueOf(longitude));
         mMapView = (MapView) view.findViewById(R.id.map_main);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -110,16 +111,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                 LatLng syndey = new LatLng(latitude, longitude);
                 googleMap.addMarker(new MarkerOptions().position(syndey).icon(BitmapDescriptorFactory.fromResource(R.drawable.mylocationgif)));
 
-//                Log.d("TEST", listPlace.size() +"--");
-//                for ( int j=0; j<listPlace.size(); j++ ){
-//                    Log.d("TEST", listPlace.get(j).getId() +"");
-//                    googleMap.addMarker(new MarkerOptions()
-//                            .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
-//                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-//                            .title(listPlace.get(j).getDisplay_name()));
-//                    //marker.showInfoWindow();
-//                    //createMarker(mGoogleMap, listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude(), listPlace.get(j).getDisplay_name());
-//                }
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(syndey).zoom(16).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 googleMap.getUiSettings().setMyLocationButtonEnabled(false);
@@ -188,6 +179,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
         }
     }
 
+
     class LoadPlaceAround extends AsyncTask<String, Void, String>{
         HttpHandler httpHandler;
         String token, latitude, longitude;
@@ -225,6 +217,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                             String display_name = data.getString("display_name");
                             String description = data.getString("description");
                             String address = data.getString("address");
+                            String city = data.getString("city");
                             String phone_number = data.getString("phone_number");
                             String email = data.getString("email");
                             String photo = data.getString("photo");
@@ -234,18 +227,32 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                             String wifi_password = data.getString("wifi_password");
                             Double latitude = data.getDouble("latitude");
                             Double longitude = data.getDouble("longitude");
-                            String user_id = data.getString("user_id");
-
-                            final Places place = new Places();
-                            place.setId(id);
-                            place.setDisplay_name(display_name);
-                            place.setLatitude(latitude);
-                            place.setLongitude(longitude);
+                            String status_p = data.getString("status");
+                            int user_id = data.getInt("user_id");
+                            final Places place = new Places(
+                                    id,
+                                    display_name,
+                                    description,
+                                    address,
+                                    city,
+                                    phone_number,
+                                    email,
+                                    photo,
+                                    price_limit,
+                                    time_open,
+                                    time_close,
+                                    wifi_password,
+                                    latitude,
+                                    longitude,
+                                    status_p,
+                                    user_id
+                            );
                             listPlace.add(place);
                         }
+                        hideProgressDialog();
                         addListMaker();
                     }
-                    hideProgressDialog();
+                    //hideProgressDialog();
                 } catch (JSONException e) {
                     e.printStackTrace();
                     hideProgressDialog();
@@ -258,27 +265,42 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mGoogleMap = googleMap;
-                Marker marker = null;
-                for ( int j=0; j<listPlace.size(); j++ ){
-                    marker = googleMap.addMarker(new MarkerOptions()
+                for (int j =0; j<listPlace.size(); j++ ){
+                    googleMap.addMarker(new MarkerOptions()
                             .position(new LatLng(listPlace.get(j).getLatitude(), listPlace.get(j).getLongitude()))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                            .title(listPlace.get(j).getDisplay_name()));
+                            .title(listPlace.get(j).getDisplay_name())
+                    );
+                    googleMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
+                        @Override
+                        public void onInfoWindowClick(Marker marker) {
+                            String text = marker.getId();
+                            String id = text.substring(1, text.length());
+                            sendPlace(Integer.valueOf(id)-1);
+                        }
+                    });
                 }
-                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener()
-                {
-
-                    @Override
-                    public boolean onMarkerClick(Marker arg0) {
-                        if(arg0.getTitle().equals("MyHome")) // if marker source is clicked
-                            Toast.makeText(getActivity(), arg0.getTitle(), Toast.LENGTH_SHORT).show();// display toast
-                        return true;
-                    }
-
-                });
-                onInfoWindowClick(marker);
             }
         });
+    }
+    private void sendPlace(int j){
+        Intent intent = new Intent(getActivity(), PlaceDetailActivity.class);
+        Bundle b = new Bundle();
+        b.putInt("id", listPlace.get(j).getId());
+        b.putDouble("latitude", listPlace.get(j).getLatitude());
+        b.putDouble("longitude", listPlace.get(j).getLongitude());
+        b.putString("display_name", listPlace.get(j).getDisplay_name());
+        b.putString("url_image", listPlace.get(j).getPhoto());
+        b.putString("address", listPlace.get(j).getAddress());
+        b.putString("phone", listPlace.get(j).getPhone_number());
+        b.putString("email", listPlace.get(j).getEmail());
+        b.putString("price", listPlace.get(j).getPrice_limit());
+        b.putString("time_open", listPlace.get(j).getTime_open());
+        b.putString("time_close", listPlace.get(j).getTime_close());
+        b.putString("wifi", listPlace.get(j).getWifi_password());
+        b.putString("description", listPlace.get(j).getDescription());
+        intent.putExtras(b);
+        startActivity(intent);
     }
     @Override
     public void onInfoWindowClick(Marker marker) {

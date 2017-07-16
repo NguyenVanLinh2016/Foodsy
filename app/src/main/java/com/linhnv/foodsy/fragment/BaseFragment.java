@@ -17,8 +17,11 @@ public class BaseFragment extends Fragment {
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.setCancelable(false); //can cancel when press back
             mProgressDialog.setMessage("Loading");
+            if (!mProgressDialog.isShowing()){
+                mProgressDialog.show();
+            }
+
         }
-        mProgressDialog.show();
     }
     public void showProgressDialog(String msg){
         if (mProgressDialog == null){
@@ -26,11 +29,14 @@ public class BaseFragment extends Fragment {
             mProgressDialog.setIndeterminate(false);
             mProgressDialog.setCancelable(false); //can cancel when press back
             mProgressDialog.setMessage(msg);
+            if (!mProgressDialog.isShowing()){
+                mProgressDialog.show();
+            }
         }
-        mProgressDialog.show();
     }
     public void hideProgressDialog(){
-        if (mProgressDialog != null || mProgressDialog.isShowing()){
+
+        if (mProgressDialog != null){
             mProgressDialog.dismiss();
         }
     }

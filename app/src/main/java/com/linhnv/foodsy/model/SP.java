@@ -2,10 +2,14 @@ package com.linhnv.foodsy.model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.drawable.shapes.Shape;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.linhnv.foodsy.R;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Huu on 28/06/2017.
@@ -23,6 +27,7 @@ public class SP {
     private static final String KEY_LONGITUDE = "longtitude";
     private static final String KEY_TOKEN = "token";
     private static final String KEY_USER_INFO= "info_user";
+    private static final String KEY_BOOKMARK= "bookmark";
 
     public SP(Context context) {
         this._context = context;
@@ -95,5 +100,16 @@ public class SP {
     public String getUser(){
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE_USER, PREFS_MODE);
         return user.getString(KEY_USER_INFO, "");
+    }
+    public void setBookmark(String value){
+        SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_BOOKMARK, value);
+        //editor.putStringSet(KEY_BOOKMARK, (Set<String>) value);
+        editor.commit();
+    }
+    public String getBookmark(){
+        SharedPreferences bookmark = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
+        return bookmark.getString(KEY_BOOKMARK, "");
     }
 }

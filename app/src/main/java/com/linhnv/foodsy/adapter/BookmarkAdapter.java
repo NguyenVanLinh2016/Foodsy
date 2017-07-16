@@ -6,10 +6,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.Place;
+import com.linhnv.foodsy.model.Places;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -19,12 +22,12 @@ import java.util.List;
 
 public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.BookmarkViewHolder> {
 
-    private List<Place> placeList;
+    private List<Places> bookmarkList;
     private Context context;
     private LayoutInflater layoutInflater;
-    public BookmarkAdapter(Context context, List<Place> data){
+    public BookmarkAdapter(Context context, List<Places> data){
         this.context = context;
-        this.placeList = data;
+        this.bookmarkList = data;
         this.layoutInflater = LayoutInflater.from(context);
     }
     @Override
@@ -35,25 +38,27 @@ public class BookmarkAdapter extends RecyclerView.Adapter<BookmarkAdapter.Bookma
 
     @Override
     public void onBindViewHolder(BookmarkViewHolder holder, int position) {
-        Place place = placeList.get(position);
-        holder.txtName_bookmark.setText(place.getNameRestaurant());
-        holder.btnAgo_bookmark.setText("Cách đây " +place.getAgo()+ " P");
+        Places places = bookmarkList.get(position);
+        holder.txtName_bookmark.setText(places.getDisplay_name());
+        Picasso.with(context)
+                .load(places.getPhoto())
+                .placeholder(R.drawable.bglogin5)
+                .error(R.drawable.bglogin5)
+                .into(holder.image_bookmark);
     }
 
     @Override
     public int getItemCount() {
-        return placeList.size();
+        return bookmarkList.size();
     }
 
     class BookmarkViewHolder extends RecyclerView.ViewHolder{
-        //private ImageView imgPlace;
+        private ImageView image_bookmark;
         private TextView txtName_bookmark;
-        private Button btnAgo_bookmark;
         public BookmarkViewHolder(View itemView) {
             super(itemView);
-
+            image_bookmark = (ImageView) itemView.findViewById(R.id.image_view_bookmark);
             txtName_bookmark = (TextView) itemView.findViewById(R.id.text_view_namePlace_bookmark);
-            btnAgo_bookmark = (Button) itemView.findViewById(R.id.button_ago_boormark);
         }
     }
 }
