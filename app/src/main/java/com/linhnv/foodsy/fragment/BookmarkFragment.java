@@ -48,8 +48,6 @@ public class BookmarkFragment extends BaseFragment {
     private String url_place_bookmark = "https://foodsyapp.herokuapp.com/api/place";
     private String url_img = "https://foodsyapp.herokuapp.com/api/place/photo";
     private String token;
-    private Places places = new Places();
-    public int count;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -64,7 +62,10 @@ public class BookmarkFragment extends BaseFragment {
         sp = new SP(getActivity());
         listId = new ArrayList<>();
         placeList = new ArrayList<>();
-
+        init();
+        return view;
+    }
+    private void init(){
         token = sp.getToken();
         String getData = sp.getBookmark();
         if (getData.length() > 0){
@@ -105,14 +106,12 @@ public class BookmarkFragment extends BaseFragment {
 
             }
         }));
-
-
-        return view;
     }
+
+
     public class GetPlaceBookmark extends AsyncTask<String, Void, String> {
         String token;
         String id;
-        int i = 0;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();

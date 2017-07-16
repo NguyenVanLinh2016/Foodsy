@@ -79,7 +79,9 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
+    private void init(){
         sp = new SP(getActivity());
         listPlace = new ArrayList<>();
         latitude = sp.getLatitude();
@@ -87,15 +89,11 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
         new LoadPlaceAround().execute(sp.getToken(), String.valueOf(latitude), String.valueOf(longitude));
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+         init();
         mMapView = (MapView) view.findViewById(R.id.map_main);
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();

@@ -86,7 +86,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private int id;
     private List<Integer> listId;
     private List<Integer> listId_bookmark;
-    String dataBookmark;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,7 +95,6 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         listId = new ArrayList<>();
         listId_bookmark = new ArrayList<>();
         sp = new SP(this);
-        dataBookmark = new String();
         //get data from intent
         id = getIntent().getExtras().getInt("id");
         latitude = getIntent().getExtras().getDouble("latitude");
@@ -295,119 +294,49 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                 foodReviews();
                 break;
             case R.id.image_view_bookmark_detail:
-//                int image = isOn ? R.drawable.bookmark2 : R.drawable.bookmark1;
-//                isOn = !isOn;
-                StringBuffer buffer = new StringBuffer();
+                listId_bookmark.clear();
                 String bookmark = sp.getBookmark();
+                String dataBookmark1 = "";
+                String dataBookmark2 = "";
 
-
-                if (bookmark.length() == 0){
-                    sp.setBookmark(id +",");
-                }else{
-                    sp.setBookmark(bookmark.concat( id +","));
-                    Log.d(TAG, sp.getBookmark());
+                if (isOn){
+                    image_view_bookmark_detail.setImageResource(R.drawable.bookmark2);
+                    isOn = false;
+                    //check data
                     String [] id_b = sp.getBookmark().split(",");
                     for(int i=0; i<id_b.length; i++){
                         listId_bookmark.add(Integer.valueOf(id_b[i].toString()));
                     }
                     for (int i =0; i<listId_bookmark.size(); i++){
-                        dataBookmark.concat(listId_bookmark.get(i).intValue() +",");
+                        if (listId_bookmark.get(i).intValue() == id){
+                            listId_bookmark.remove(i);
+                        }
                     }
-                    sp.setBookmark(dataBookmark);
+                    for (int i =0; i<listId_bookmark.size(); i++){
+                        dataBookmark2 = dataBookmark2.concat(listId_bookmark.get(i).intValue() +",");
+                    }
+                    sp.setBookmark(dataBookmark2);
+                    Log.d(TAG, "----"+ dataBookmark2);
+                }else{
+                    //set state
+                    image_view_bookmark_detail.setImageResource(R.drawable.bookmark1);
+                    isOn = true;
+                    //set data
+                    if (bookmark.length() == 0){
+                        sp.setBookmark(id +",");
+                    }else{
+                        sp.setBookmark(bookmark.concat( id +","));
+                        String [] id_b = sp.getBookmark().split(",");
+                        for(int i=0; i<id_b.length; i++){
+                            listId_bookmark.add(Integer.valueOf(id_b[i].toString()));
+                        }
+                        for (int i =0; i<listId_bookmark.size(); i++){
+                            dataBookmark1 = dataBookmark1.concat(listId_bookmark.get(i).intValue() +",");
+                        }
+                        Log.d(TAG, dataBookmark1 +"----");
+                        sp.setBookmark(dataBookmark1);
+                    }
                 }
-
-//                if (isOn){
-//                    image_view_bookmark_detail.setImageResource(R.drawable.bookmark2);
-//                    isOn = false;
-//
-//
-//                    //buffer.append("");
-//                    //sp.setBookmark(buffer);
-//                }else{
-//                    image_view_bookmark_detail.setImageResource(R.drawable.bookmark1);
-//                    isOn = true;
-//                    //buffer.append(id +",");
-//                    //sp.setBookmark(buffer);
-//
-//                    if (bookmark.length() == 0){
-//                        sp.setBookmark(id + ",");
-//                    }
-//
-////                    else{
-////                        String [] id_b = bookmark.split(",");
-////                        for(int i=0; i<id_b.length; i++){
-////                            listId_bookmark.add(Integer.valueOf(id_b[i].toString()));
-////                        }
-////
-////                        buffer.append(id +",");
-////                        sp.setBookmark(buffer);
-////                    }
-//
-//                }
-
-                //image_view_bookmark_detail.setImageResource(image);
-                //1,3,133
-//                StringBuffer buffer = new StringBuffer();
-//                String bookmark = sp.getBookmark();
-//                if (bookmark.length() == 0){
-//                    buffer.append(id);
-//                    sp.setBookmark(buffer);
-//                }else{
-//                    buffer.append(id +",");
-//                    sp.setBookmark(buffer);
-//                    listId_bookmark.clear();
-//                    String [] id_b = bookmark.split(",");
-//                    for(int i=0; i<id_b.length; i++){
-//                        listId_bookmark.add(Integer.valueOf(id_b[i].toString()));
-//                    }
-//                    for (int i = 0; i< listId_bookmark.size(); i++){
-//                        Log.d(TAG, listId_bookmark.size() +"--"+ listId_bookmark.get(i).intValue());
-//                        if (listId_bookmark.get(i).intValue() == id){
-//                            listId_bookmark.remove(i);
-//                            break;
-//                        }
-//                    }
-//                    for (int i=0; i< listId_bookmark.size(); i++){
-//                        buffer.append(listId_bookmark.get(i).intValue() +",");
-//                        sp.setBookmark(buffer);
-//                    }
-//                }
-
-                //Toast.makeText(this, ""+ sp.getBookmark(), Toast.LENGTH_SHORT).show();
-
-
-
-
-//                if (isOn){
-//                    for(int i=0; i< id_s.length; i++){
-////                        listId.add(Integer.valueOf(id_s[i]));
-////                    }
-//                }
-
-
-
-//                if (isOn) {
-//                    String bookmark = sp.getBookmark();
-//                    String [] id_s = bookmark.split(",");
-//                    for(int i=0; i< id_s.length; i++){
-//                        listId.add(Integer.valueOf(id_s[i]));
-//                    }
-//                    StringBuffer s = new StringBuffer();
-//                    for (int i = 0; i< listId.size(); i++){
-//                        if (!listId.get(i).toString().equalsIgnoreCase(String.valueOf(id))){
-//                            if (i == listId.size() - 1) {
-//                                s.append(listId.get(i).toString());
-//                            } else {
-//                                s.append(listId.get(i).toString() + ",");
-//                            }
-//                        }
-//                    }
-//                    sp.setBookmark(s);
-//                } else {
-//
-//                }
-
-                Toast.makeText(this, ""+ sp.getBookmark(), Toast.LENGTH_SHORT).show();
                 break;
         }
     }
