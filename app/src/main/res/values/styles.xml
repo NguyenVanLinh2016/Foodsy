@@ -36,4 +36,5 @@
         <item name="android:rating">0</item>
         <item name="android:stepSize">0.5</item>
     </style>
+
 </resources>

@@ -73,7 +73,8 @@
         <activity
             android:name=".activity.HomeActivity"
             android:label="@string/title_activity_home"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".activity.UpdateInfoActivity"
             android:screenOrientation="portrait" />
@@ -83,7 +84,9 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".activity.SearchActivity" />
-        <activity android:name=".activity.PlaceDetailActivity" />
+        <activity
+            android:name=".activity.PlaceDetailActivity"
+            android:screenOrientation="portrait" />
         <activity android:name=".activity.BaseActivity" />
         <activity android:name=".activity.SplashActivity"></activity>
         <activity android:name=".activity.RegisterOwnerActivity"></activity>

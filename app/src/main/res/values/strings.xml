@@ -62,9 +62,9 @@
     <string name="your_loaction">Vị trí hiện tại</string>
 
     <!--Place Detail Activity-->
-    <string name="food_menu">FOOD MENU</string>
-    <string name="place_detail">PLACE DETAILS</string>
-    <string name="place_review">PLACE REVIEWS</string>
+    <string name="food_menu">THỰC ĐƠN</string>
+    <string name="place_detail">THÔNG TIN</string>
+    <string name="place_review">ĐÁNH GIÁ</string>
 
     <!--Error-->
     <string name="error_message_username">Username phải lớn hơn 6 ký tự</string>
@@ -121,4 +121,6 @@
     <string name="price_place">Giá: </string>
     <string name="wifi_place">Wifi: </string>
     <string name="description_place">Mô tả: </string>
+
+    <string name="button_send">Gửi</string>
 </resources>

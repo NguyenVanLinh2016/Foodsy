@@ -52,6 +52,7 @@ public class BookmarkFragment extends BaseFragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
     }
 
     @Nullable
@@ -60,24 +61,62 @@ public class BookmarkFragment extends BaseFragment {
         View view = inflater.inflate(R.layout.fragment_bookmark, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.recycle_view_bookmark);
         sp = new SP(getActivity());
-        listId = new ArrayList<>();
         placeList = new ArrayList<>();
-        init();
+        //loadData();
+        //init();
+        Log.d(TAG, "onCreateView");
         return view;
     }
-    private void init(){
-        token = sp.getToken();
-        String getData = sp.getBookmark();
-        if (getData.length() > 0){
-            String [] id = getData.split(",");
-            for(int i=0; i<id.length; i++){
-                listId.add(Integer.valueOf(id[i].toString()));
-            }
-            for (int i=0; i < listId.size(); i++){
-                new GetPlaceBookmark().execute(listId.get(i).toString(), token);
-            }
-        }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        Log.d(TAG, "onActivityCreated");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        loadData();
+        init();
         setAdapter();
+        placeList.clear();
+        //bookmarkAdapter.notifyDataSetChanged();
+        Log.d(TAG, "onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(TAG, "onStop");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.d(TAG, "onDetach");
+    }
+
+    private void init(){
         recyclerView.addOnItemTouchListener(new RecyclerTouchListenerHome(getContext(), recyclerView, new ClickListener() {
             @Override
             public void onClick(View view, int position) {
@@ -108,6 +147,21 @@ public class BookmarkFragment extends BaseFragment {
         }));
     }
 
+    private void loadData(){
+        listId = new ArrayList<>();
+        token = sp.getToken();
+        String getData = sp.getBookmark();
+        if (getData.length() > 0){
+            String [] id = getData.split(",");
+            for(int i=0; i<id.length; i++){
+                listId.add(Integer.valueOf(id[i].toString()));
+            }
+            //Toast.makeText(getActivity(), "SIZE: "+ listId.size(), Toast.LENGTH_SHORT).show();
+            for (int i=0; i < listId.size(); i++){
+                new GetPlaceBookmark().execute(listId.get(i).toString(), token);
+            }
+        }
+    }
 
     public class GetPlaceBookmark extends AsyncTask<String, Void, String> {
         String token;
@@ -134,6 +188,7 @@ public class BookmarkFragment extends BaseFragment {
             super.onPostExecute(result);
             hideProgressDialog();
             if (result != null){
+                //placeList.clear();
                 if (result.equals("405")){
                     Toasty.error(getActivity(), "Loading error", Toast.LENGTH_SHORT).show();
                 }else{
