@@ -5,8 +5,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.location.places.Place;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.PlaceFoodReviews;
 
@@ -35,7 +37,9 @@ public class PlaceFoodReviewsAdapter extends RecyclerView.Adapter<PlaceFoodRevie
 
     @Override
     public void onBindViewHolder(PlaceFoodReviewsViewHolder holder, int position) {
-
+        PlaceFoodReviews placeFoodReviews = mListPlaceReviews.get(position);
+        holder.text_view_message.setText(placeFoodReviews.getMessage());
+        holder.ratingBar_item.setRating(Float.valueOf(placeFoodReviews.getRating()));
     }
 
     @Override
@@ -45,12 +49,13 @@ public class PlaceFoodReviewsAdapter extends RecyclerView.Adapter<PlaceFoodRevie
 
     class PlaceFoodReviewsViewHolder extends RecyclerView.ViewHolder{
 
-        private TextView txtDisplayName;
+        private TextView text_view_message;
+        private RatingBar ratingBar_item;
 
         public PlaceFoodReviewsViewHolder(View itemView) {
             super(itemView);
-
-            txtDisplayName = (TextView) itemView.findViewById(R.id.text_view_displayName_reviews);
+            text_view_message = (TextView) itemView.findViewById(R.id.text_view_message);
+            ratingBar_item = (RatingBar) itemView.findViewById(R.id.ratingBar_item);
         }
     }
 }

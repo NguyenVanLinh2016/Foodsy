@@ -123,4 +123,6 @@
     <string name="description_place">Mô tả: </string>
 
     <string name="button_send">Gửi</string>
+    <string name="title_message">ĐÁNH GIÁ</string>
+    <string name="dialog_cancle">Huỷ</string>
 </resources>

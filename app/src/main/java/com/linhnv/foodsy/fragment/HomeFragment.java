@@ -89,6 +89,8 @@ public class HomeFragment extends BaseFragment {
             url_places = url_place_entertain;
         } else if (url_eat == 2) {
             url_places = url_place_drink;
+        }else{
+
         }
         String token = sp.getToken();
         Log.d(TAG, "tokenHome: "+ token);

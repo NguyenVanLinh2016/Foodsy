@@ -116,7 +116,7 @@ public class HomeActivity extends AppCompatActivity
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //checkRoleUser();
+        checkRoleUser();
 
     }
 

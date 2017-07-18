@@ -34,7 +34,7 @@
         android:maxLines="1"/>
 
     <RatingBar
-        android:id="@+id/ratingBar"
+        android:id="@+id/ratingBar_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintLeft_toRightOf="@+id/text_view_displayName_reviews"
@@ -55,6 +55,7 @@
         app:layout_constraintRight_toRightOf="parent"
         android:text="July 20th 2017"/>
     <TextView
+        android:id="@+id/text_view_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@id/image_view_avatar_reviews"

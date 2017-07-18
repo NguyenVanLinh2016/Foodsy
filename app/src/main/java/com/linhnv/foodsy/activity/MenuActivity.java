@@ -79,6 +79,11 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;
+            case R.id.frame_bookmark:
+                bundle.putInt("eat", 3);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
         }
     }
 }
