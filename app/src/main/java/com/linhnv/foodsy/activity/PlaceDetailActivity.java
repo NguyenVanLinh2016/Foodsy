@@ -502,6 +502,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             return jsonStr;
         }
 
+
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
