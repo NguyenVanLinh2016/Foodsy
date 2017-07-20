@@ -20,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.andremion.counterfab.CounterFab;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.adapter.ExpanlistFoodMenuAdapter;
 import com.linhnv.foodsy.model.DirectionFinder;
@@ -79,7 +78,6 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private TextView text_view_name_detail;
     private ImageView image_view_back_detail;
     private ImageView image_view_bookmark_detail;
-    private CounterFab image_view_cart;
 
     private List<PlaceFoodReviews> mPlaceFoodReviewsList;
     private List<Places> mPlaceDetailsList;
@@ -177,8 +175,6 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         text_view_name_detail = (TextView) findViewById(R.id.text_view_name_detail);
         image_view_back_detail = (ImageView) findViewById(R.id.image_view_back_detail);
         image_view_bookmark_detail = (ImageView) findViewById(R.id.image_view_bookmark_detail);
-        image_view_cart = (CounterFab) findViewById(R.id.image_view_cart);
-        image_view_cart.setSize(43);
         //image_view_cart.setCount(1);
 
         view_foodMenu = findViewById(R.id.view_foodMenu);
@@ -300,6 +296,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                 foodDetails();
                 break;
             case R.id.text_view_placeReviews:
+                mPlaceFoodReviewsList.clear();
                 setDefaultView();
                 mTextView_placeReviews.setTextColor(Color.parseColor("#3cb963"));
                 recycle_view_foodReviews.setVisibility(View.VISIBLE);
@@ -528,6 +525,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                 String status_c = data.getString("status");
                                 String created_at = data.getString("created_at");
                                 String updated_at = data.getString("updated_at");
+                                String display_name = data.getString("display_name");
 
                                 PlaceFoodReviews placeFoodReviews = new PlaceFoodReviews(
                                         id,
@@ -538,7 +536,8 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                         place_id,
                                         status_c,
                                         created_at,
-                                        updated_at
+                                        updated_at,
+                                        display_name
                                 );
                                 mPlaceFoodReviewsList.add(placeFoodReviews);
                             }

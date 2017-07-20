@@ -31,18 +31,6 @@
                 android:ellipsize="end"
                 android:lines="1"
                 android:gravity="center"/>
-            <com.andremion.counterfab.CounterFab
-                android:id="@+id/image_view_cart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/shoppingcart"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/margin_8dp"
-                android:layout_centerVertical="true"
-                app:layout_anchorGravity="bottom|end"
-                app:backgroundTint="@null"
-                android:background="@null"
-                android:scaleType="centerCrop"/>
         </RelativeLayout>
 
     </android.support.design.widget.AppBarLayout>

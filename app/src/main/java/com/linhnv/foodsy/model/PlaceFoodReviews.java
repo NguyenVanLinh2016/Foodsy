@@ -14,11 +14,12 @@ public class PlaceFoodReviews {
     private String status;
     private String created_at;
     private String updated_at;
+    private String display_name;
 
     public PlaceFoodReviews(){
 
     }
-    public PlaceFoodReviews(int id, String message, String photo, String rating, int user_id, int place_id, String status, String created_at, String updated_at) {
+    public PlaceFoodReviews(int id, String message, String photo, String rating, int user_id, int place_id, String status, String created_at, String updated_at, String display_name) {
         this.id = id;
         this.message = message;
         this.photo = photo;
@@ -28,6 +29,7 @@ public class PlaceFoodReviews {
         this.status = status;
         this.created_at = created_at;
         this.updated_at = updated_at;
+        this.display_name = display_name;
     }
 
     public int getId() {
@@ -100,5 +102,13 @@ public class PlaceFoodReviews {
 
     public void setUpdated_at(String updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public String getDisplay_name() {
+        return display_name;
+    }
+
+    public void setDisplay_name(String display_name) {
+        this.display_name = display_name;
     }
 }

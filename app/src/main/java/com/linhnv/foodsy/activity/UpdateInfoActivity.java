@@ -1,14 +1,23 @@
 package com.linhnv.foodsy.activity;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
 import android.util.Log;
@@ -23,7 +32,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.linhnv.foodsy.R;
+import com.linhnv.foodsy.model.ImageUtils;
 import com.linhnv.foodsy.model.Places;
+import com.linhnv.foodsy.model.RealPathUtil;
 import com.linhnv.foodsy.model.User;
 import com.linhnv.foodsy.network.HttpHandler;
 import com.linhnv.foodsy.model.SP;
@@ -34,16 +45,33 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
 import es.dmoral.toasty.Toasty;
+import id.zelory.compressor.Compressor;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class UpdateInfoActivity extends BaseActivity implements View.OnClickListener {
 
@@ -57,9 +85,16 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     private String token = "";
     private String url_update_info = "https://foodsyapp.herokuapp.com/api/user/update";
     private String url_user = "https://foodsyapp.herokuapp.com/api/user/profile";
-    static final int REQUEST_IMAGE_CAPTURE = 1;
     //sp
     private SP sp;
+    //camera
+    private final CharSequence[] items = {"Chụp ảnh", "Tải ảnh lên"};
+    private static final int REQUEST_CAMERA = 1001;
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
+    private static final int REQUEST_GALLERY = 1002;
+    private Uri selectedImageUri;
+    private Bitmap mBitmap;
+    private File actualImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,6 +158,11 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                             sex = "f";
                         }
                         new UpdateUserInfo().execute(token, fullname, email, address, phone, sex);
+                        try {
+                            execMultipartPost();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 } else {
                     String sex = String.valueOf(radioButton.getText());
@@ -132,13 +172,19 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                         sex = "f";
                     }
                     new UpdateUserInfo().execute(token, fullname, email, address, phone, sex);
+                    try {
+                        execMultipartPost();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
                 break;
             case R.id.image_avatar:
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
+                openFileChooserDialog();
+//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+//                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+//                }
                 break;
         }
     }
@@ -238,14 +284,14 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
-            image_avatar.setImageBitmap(imageBitmap);
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+//            Bundle extras = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) extras.get("data");
+//            image_avatar.setImageBitmap(imageBitmap);
+//        }
+//    }
 
     @Override
     protected void onStart() {
@@ -284,6 +330,186 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
         });
         AlertDialog alertDialog = builer.create();
         alertDialog.show();
+
+    }
+    private void openFileChooserDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Add Picture");
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch (which) {
+                    case 0:
+                        initCameraPermission();
+                        break;
+                    case 1:
+                        initGalleryIntent();
+                        break;
+                    default:
+                }
+            }
+        });
+        builder.show();
+    }
+    @TargetApi(Build.VERSION_CODES.M)
+    private void initCameraPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+                Toast.makeText(this, "Permission to use Camera", Toast.LENGTH_SHORT).show();
+            }
+            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+        } else {
+            initCameraIntent();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+            if (grantResults.length == 1 &&
+                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initCameraIntent();
+            } else {
+                Toast.makeText(this, "Permission denied by user", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private void initGalleryIntent() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(intent, REQUEST_GALLERY);
+    }
+
+    private void initCameraIntent() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        File file = getOutputMediafile(1);
+        selectedImageUri = Uri.fromFile(file);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, selectedImageUri);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(intent, REQUEST_CAMERA);
+        }
+    }
+    private File getOutputMediafile(int type) {
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), getResources().getString(R.string.app_name)
+        );
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                return null;
+            }
+        }
+        String timeStamp = new SimpleDateFormat("yyyyHHdd_HHmmss").format(new Date());
+        File mediaFile;
+        if (type == 1) {
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".png");
+        } else {
+            return null;
+        }
+
+        return mediaFile;
+    }
+
+    String realPath = "";
+
+    @Override
+    @SuppressLint("NewApi")
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == REQUEST_CAMERA) {
+                realPath = selectedImageUri.getPath();
+            } else if (requestCode == REQUEST_GALLERY) {
+                selectedImageUri = data.getData();
+                if (Build.VERSION.SDK_INT < 11) {
+                    realPath = RealPathUtil.getRealPathFromURI_BelowAPI11(this, data.getData());
+                } else if (Build.VERSION.SDK_INT < 19) {
+                    realPath = RealPathUtil.getRealPathFromURI_API11to18(this, data.getData());
+                } else {
+                    realPath = RealPathUtil.getRealPathFromURI_API19(this, data.getData());
+                }
+
+                Log.d(TAG, "real path: " + realPath);
+            }
+            mBitmap = ImageUtils.getScaledImage(selectedImageUri, this);
+            setImageBitmap(mBitmap);
+        }
+    }
+    private void setImageBitmap(Bitmap bm) {
+        image_avatar.setImageBitmap(bm);
+        //btn_upload.setClickable(true);
+        //btn_upload.setOnClickListener(upload);
+    }
+    private void execMultipartPost() throws Exception {
+        File file = new File(realPath);
+        final String contentType = file.toURL().openConnection().getContentType();
+
+        Log.d(TAG, "file: " + file.getPath());
+        Log.d(TAG, "contentType: " + contentType);
+
+        //composer
+        new Compressor(this)
+                .compressToFileAsFlowable(file)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<File>() {
+                    @Override
+                    public void accept(File files) {
+                        actualImage = files;
+
+                        RequestBody fileBody = RequestBody.create(MediaType.parse(contentType), actualImage);
+
+                        final String filename = "file_" + System.currentTimeMillis() / 1000L;
+
+                        RequestBody requestBody = new MultipartBody.Builder()
+                                .setType(MultipartBody.FORM)
+                                .addFormDataPart("token", token)
+                                .addFormDataPart("photo", filename + ".jpg", fileBody)
+                                .build();
+
+                        Request request = new Request.Builder()
+                                .url(url_update_info)
+                                .post(requestBody)
+                                .build();
+
+                        OkHttpClient okHttpClient = new OkHttpClient();
+                        okHttpClient.newCall(request).enqueue(new Callback() {
+                            @Override
+                            public void onFailure(Call call, final IOException e) {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.d(TAG, "Success");
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onResponse(Call call, final Response response) throws IOException {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        try {
+                                            Log.d("TEST", "Fail");
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) {
+                        throwable.printStackTrace();
+                        Log.d("TEST", throwable.getMessage());
+                    }
+                });
 
     }
 }
