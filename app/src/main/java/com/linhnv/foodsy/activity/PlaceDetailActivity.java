@@ -1,30 +1,31 @@
 package com.linhnv.foodsy.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.andremion.counterfab.CounterFab;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.adapter.ExpanlistFoodMenuAdapter;
-import com.linhnv.foodsy.fragment.BookmarkFragment;
 import com.linhnv.foodsy.model.DirectionFinder;
 import com.linhnv.foodsy.model.DirectionFinderListener;
 import com.linhnv.foodsy.model.FoodMenu;
 import com.linhnv.foodsy.adapter.PlaceDetailMenuAdapter;
-import com.linhnv.foodsy.model.Place;
 import com.linhnv.foodsy.model.PlaceFoodReviews;
 import com.linhnv.foodsy.adapter.PlaceFoodReviewsAdapter;
 import com.linhnv.foodsy.model.Places;
@@ -37,10 +38,19 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
 
 import es.dmoral.toasty.Toasty;
 
@@ -58,7 +68,8 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private List<String> listDataHeader;
     private HashMap<String, List<FoodMenu>> listDataChild;
     private ImageView image_view_details;
-    private Button button_ready_detail;
+    private Button button_ready_detail, button_rating;
+    private RatingBar ratingBar_detail;
     //view
     private View view_foodMenu;
     private View view_details;
@@ -67,7 +78,6 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private TextView text_view_name_detail;
     private ImageView image_view_back_detail;
     private ImageView image_view_bookmark_detail;
-    private CounterFab image_view_cart;
 
     private List<PlaceFoodReviews> mPlaceFoodReviewsList;
     private List<Places> mPlaceDetailsList;
@@ -75,6 +85,9 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private PlaceFoodReviewsAdapter mPlaceFoodReviewsAdapter;
 
     private String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
+    private String URL_COMMENT = "https://foodsyapp.herokuapp.com/api/comment/store";
+    private String URL_LOADCOMMENT = "https://foodsyapp.herokuapp.com/api/place";
+    private String url_img = "https://foodsyapp.herokuapp.com/api/user/photo";
     private SP sp;
     double latitude;
     double longitude;
@@ -86,13 +99,14 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private int id;
     private List<Integer> listId;
     private List<Integer> listId_bookmark;
-
+    private RelativeLayout layout_rating;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail);
         init();
         listId = new ArrayList<>();
+        mPlaceFoodReviewsList = new ArrayList<>();
         listId_bookmark = new ArrayList<>();
         sp = new SP(this);
         //get data from intent
@@ -120,7 +134,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         sendRequest(origin, destination);
 
         mTextView_foodMenu.setTextColor(Color.parseColor("#3cb963"));
-        //RelativeLayout.setVisibility(View.VISIBLE);
+        layout_rating.setVisibility(View.GONE);
         expandable_lv_foodMenu.setVisibility(View.VISIBLE);
 
         view_foodMenu.setVisibility(View.VISIBLE);
@@ -158,16 +172,17 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         recycle_view_foodReviews = (RecyclerView) findViewById(R.id.recycle_view_foodReviews);
         image_view_details = (ImageView) findViewById(R.id.image_view_details);
         button_ready_detail = (Button) findViewById(R.id.button_ready_detail);
+        button_rating = (Button) findViewById(R.id.button_rating);
         text_view_name_detail = (TextView) findViewById(R.id.text_view_name_detail);
         image_view_back_detail = (ImageView) findViewById(R.id.image_view_back_detail);
         image_view_bookmark_detail = (ImageView) findViewById(R.id.image_view_bookmark_detail);
-        image_view_cart = (CounterFab) findViewById(R.id.image_view_cart);
-        image_view_cart.setSize(43);
         //image_view_cart.setCount(1);
 
         view_foodMenu = findViewById(R.id.view_foodMenu);
         view_details = findViewById(R.id.view_placeDetail);
         view_placeReviews = findViewById(R.id.view_placeReviews);
+        layout_rating = (RelativeLayout) findViewById(R.id.layout_rating);
+        ratingBar_detail = (RatingBar) findViewById(R.id.ratingBar_detail);
         //setonClick
         mTextView_foodMenu.setOnClickListener(this);
         mTextView_placeDetails.setOnClickListener(this);
@@ -179,6 +194,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         button_ready_detail.setOnClickListener(this);
         image_view_back_detail.setOnClickListener(this);
         image_view_bookmark_detail.setOnClickListener(this);
+        button_rating.setOnClickListener(this);
     }
 
     private void setDefaultView() {
@@ -195,6 +211,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
         //recycleView
         recycle_view_foodDetails.setVisibility(View.GONE);
         recycle_view_foodReviews.setVisibility(View.GONE);
+        layout_rating.setVisibility(View.GONE);
     }
     private void foodMenu(){
         listDataChild = new HashMap<String, List<FoodMenu>>();
@@ -244,13 +261,6 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     }
 
     private void foodReviews() {
-        mPlaceFoodReviewsList = new ArrayList<>();
-        mPlaceFoodReviewsList.add(new PlaceFoodReviews("Phan Kim Lien", "July 20th, 2016", "Mình đi ăn cũng lâu lâu rồi nên ko nhớ tên món nữa. Nhưng ốc ở đây siêu tươi ngon, ốc dai, béo, chế biến sạch sẽ và rất thơm ngon"));
-        mPlaceFoodReviewsList.add(new PlaceFoodReviews("Phan Kim Lien", "July 20th, 2016", "Mình đi ăn cũng lâu lâu rồi nên ko nhớ tên món nữa. Nhưng ốc ở đây siêu tươi ngon, ốc dai, béo, chế biến sạch sẽ và rất thơm ngon"));
-        mPlaceFoodReviewsList.add(new PlaceFoodReviews("Phan Kim Lien", "July 20th, 2016", "Mình đi ăn cũng lâu lâu rồi nên ko nhớ tên món nữa. Nhưng ốc ở đây siêu tươi ngon, ốc dai, béo, chế biến sạch sẽ và rất thơm ngon"));
-        mPlaceFoodReviewsList.add(new PlaceFoodReviews("Phan Kim Lien", "July 20th, 2016", "Mình đi ăn cũng lâu lâu rồi nên ko nhớ tên món nữa. Nhưng ốc ở đây siêu tươi ngon, ốc dai, béo, chế biến sạch sẽ và rất thơm ngon"));
-        mPlaceFoodReviewsList.add(new PlaceFoodReviews("Phan Kim Lien", "July 20th, 2016", "Mình đi ăn cũng lâu lâu rồi nên ko nhớ tên món nữa. Nhưng ốc ở đây siêu tươi ngon, ốc dai, béo, chế biến sạch sẽ và rất thơm ngon"));
-
         mPlaceFoodReviewsAdapter = new PlaceFoodReviewsAdapter(this, mPlaceFoodReviewsList);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recycle_view_foodReviews.setLayoutManager(linearLayoutManager);
@@ -287,11 +297,14 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                 foodDetails();
                 break;
             case R.id.text_view_placeReviews:
+                mPlaceFoodReviewsList.clear();
                 setDefaultView();
                 mTextView_placeReviews.setTextColor(Color.parseColor("#3cb963"));
                 recycle_view_foodReviews.setVisibility(View.VISIBLE);
+                layout_rating.setVisibility(View.VISIBLE);
                 view_placeReviews.setVisibility(View.VISIBLE);
-                foodReviews();
+                String token = sp.getToken();
+                new LoadComment().execute(String.valueOf(id), token);
                 break;
             case R.id.image_view_bookmark_detail:
                 listId_bookmark.clear();
@@ -337,6 +350,9 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                         sp.setBookmark(dataBookmark1);
                     }
                 }
+                break;
+            case R.id.button_rating:
+                dialog_rating();
                 break;
         }
     }
@@ -408,7 +424,42 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             }
         }
     }
+    //dialog rating
+    private void dialog_rating(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(PlaceDetailActivity.this);
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.dialog_message_comment,null);
 
+        builder.setView(view);
+        builder.setCancelable(false);
+
+        final EditText edit_text_message = (EditText) view.findViewById(R.id.edit_text_message);;
+        builder.setPositiveButton(R.string.button_send, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String token = sp.getToken();
+                float rating = ratingBar_detail.getRating();
+                String message = edit_text_message.getText().toString();
+                if (rating == 0.0){
+                    rating = 1;
+                }
+                if (message.length() < 6){
+                    Toasty.error(PlaceDetailActivity.this, "Vui lòng nhập lớn hơn 6 ký tự!!", Toast.LENGTH_SHORT).show();
+                    edit_text_message.requestFocus();
+                }else{
+                    new SendComment().execute(token, message, String.valueOf(rating), String.valueOf(id));
+                }
+            }
+        });
+        builder.setNegativeButton(R.string.dialog_cancle, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.create();
+        builder.show();
+    }
     //draw map
     private void sendRequest(String origin, String destination){
         try{
@@ -428,6 +479,171 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     public void onDirectionFinderSuccess(List<Route> routes) {
         for(Route route: routes){
             button_ready_detail.setText("Cách đây: "+ route.duration.text.split(" ")[0] +" phút");
+        }
+    }
+    public class LoadComment extends AsyncTask<String, Void, String> {
+        String id, token;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            id = params[0];
+            token = params[1];
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(URL_LOADCOMMENT +"/"+id +"/comments?token="+ token);
+            Log.e(TAG+"----", "Response from url: " + jsonStr);
+            return jsonStr;
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideProgressDialog();
+            Log.d(TAG, result);
+            if (result != null){
+                if (result.equals("404")){
+                    Toasty.error(PlaceDetailActivity.this, "Chưa có đánh giá", Toast.LENGTH_SHORT).show();
+                }else{
+                    try {
+                        JSONObject root = new JSONObject(result);
+                        int status = root.getInt("status");
+                        if (status == 200){
+                            JSONArray jsonArray = root.getJSONArray("data");
+                            for (int i=0; i<jsonArray.length(); i++){
+                                JSONObject data = jsonArray.getJSONObject(i);
+                                int id = data.getInt("id");
+                                String message = data.getString("message");
+                                String photo = data.getString("photo");
+                                String rating = data.getString("rating");
+                                int user_id = data.getInt("user_id");
+                                String url = url_img + "/"+ user_id  + "?token=" + token;
+                                int place_id = data.getInt("place_id");
+                                String status_c = data.getString("status");
+                                String created_at = data.getString("created_at");
+                                String updated_at = data.getString("updated_at");
+                                String display_name = data.getString("display_name");
+
+                                PlaceFoodReviews placeFoodReviews = new PlaceFoodReviews(
+                                        id,
+                                        message,
+                                        url,
+                                        rating,
+                                        user_id,
+                                        place_id,
+                                        status_c,
+                                        created_at,
+                                        updated_at,
+                                        display_name
+                                );
+                                mPlaceFoodReviewsList.add(placeFoodReviews);
+                            }
+                            foodReviews();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else{
+                Log.d(TAG, "Error");
+            }
+        }
+    }
+
+    class SendComment extends AsyncTask<String, Void, String>{
+        HttpHandler httpHandler;
+        String token, message, rating, place_id;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+        }
+        @Override
+        protected String doInBackground(String... params) {
+            token = params[0];
+            message = params[1];
+            rating = params[2];
+            place_id = params[3];
+            try {
+                httpHandler = new HttpHandler();
+                URL url = new URL(URL_COMMENT); // here is your URL path
+
+                JSONObject postDataParams = new JSONObject();
+                postDataParams.put("token", token);
+                postDataParams.put("message", message);
+                postDataParams.put("rating", rating);
+                postDataParams.put("place_id", place_id);
+                Log.e("params", postDataParams.toString());
+
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000 /* milliseconds */);
+                conn.setConnectTimeout(15000 /* milliseconds */);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
+
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(os, "UTF-8"));
+                writer.write(httpHandler.getPostDataString(postDataParams));
+
+                writer.flush();
+                writer.close();
+                os.close();
+
+                int responseCode = conn.getResponseCode();
+
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
+
+                    BufferedReader in = new BufferedReader(new
+                            InputStreamReader(
+                            conn.getInputStream()));
+
+                    StringBuffer sb = new StringBuffer("");
+                    String line = "";
+
+                    while ((line = in.readLine()) != null) {
+
+                        sb.append(line);
+                        break;
+                    }
+
+                    in.close();
+                    return sb.toString();
+
+                } else {
+                    return new String(String.valueOf(responseCode));
+                }
+            } catch (Exception e) {
+                return new String("Exception: " + e.getMessage());
+            }
+        }
+
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideProgressDialog();
+            if (result.equals("409")){
+                Toasty.error(PlaceDetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
+            }else{
+                try {
+                    JSONObject root = new JSONObject(result);
+                    int status = root.getInt("status");
+                    if (status == 200){
+                        Toasty.success(PlaceDetailActivity.this, "Đánh giá thành công !", Toast.LENGTH_SHORT).show();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
