@@ -87,6 +87,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
     private String URL_COMMENT = "https://foodsyapp.herokuapp.com/api/comment/store";
     private String URL_LOADCOMMENT = "https://foodsyapp.herokuapp.com/api/place";
+    private String url_img = "https://foodsyapp.herokuapp.com/api/user/photo";
     private SP sp;
     double latitude;
     double longitude;
@@ -521,6 +522,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                 String photo = data.getString("photo");
                                 String rating = data.getString("rating");
                                 int user_id = data.getInt("user_id");
+                                String url = url_img + "/"+ user_id  + "?token=" + token;
                                 int place_id = data.getInt("place_id");
                                 String status_c = data.getString("status");
                                 String created_at = data.getString("created_at");
@@ -530,7 +532,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                 PlaceFoodReviews placeFoodReviews = new PlaceFoodReviews(
                                         id,
                                         message,
-                                        photo,
+                                        url,
                                         rating,
                                         user_id,
                                         place_id,

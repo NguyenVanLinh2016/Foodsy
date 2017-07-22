@@ -121,7 +121,10 @@ public class SplashActivity extends AppCompatActivity {
                 // Permission granted.
                 getLastLocation();
             } else {
-                Log.d(TAG, "Error");
+                //when user not accept using location, and then set location in school
+                sp.setLocationUser(10.790854, 106.682391);
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+                finish();
             }
         }
     }

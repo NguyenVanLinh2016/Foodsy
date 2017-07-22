@@ -17,6 +17,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.PopupMenu;
@@ -91,7 +93,9 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     private final CharSequence[] items = {"Chụp ảnh", "Tải ảnh lên"};
     private static final int REQUEST_CAMERA = 1001;
     private static final int REQUEST_CAMERA_PERMISSION = 1;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
     private static final int REQUEST_GALLERY = 1002;
+    private boolean flag = false;
     private Uri selectedImageUri;
     private Bitmap mBitmap;
     private File actualImage;
@@ -181,10 +185,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                 break;
             case R.id.image_avatar:
                 openFileChooserDialog();
-//                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//                if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-//                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-//                }
                 break;
         }
     }
@@ -334,8 +334,9 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     }
     private void openFileChooserDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add Picture");
+        builder.setTitle("Chọn ảnh");
         builder.setItems(items, new DialogInterface.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 switch (which) {
@@ -343,7 +344,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                         initCameraPermission();
                         break;
                     case 1:
-                        initGalleryIntent();
+                        requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
                         break;
                     default:
                 }
@@ -351,29 +352,39 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
         });
         builder.show();
     }
+    //take a picture
     @TargetApi(Build.VERSION_CODES.M)
     private void initCameraPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
-            if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
+
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 Toast.makeText(this, "Permission to use Camera", Toast.LENGTH_SHORT).show();
             }
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_CAMERA_PERMISSION);
+            requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
         } else {
-            initCameraIntent();
+            Toasty.error(this, "Bạn không cho phép sử camera lúc này!!", Toast.LENGTH_SHORT).show();
+            //initCameraIntent();
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length == 1 &&
-                    grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 initCameraIntent();
             } else {
-                Toast.makeText(this, "Permission denied by user", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Bạn không cho phép sử camera lúc này!!", Toast.LENGTH_SHORT).show();
             }
-        } else {
+        } else if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION){
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initGalleryIntent();
+            } else {
+                Toast.makeText(this, "Bạn không cho phép sử ghi hình ảnh lúc này!!", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
