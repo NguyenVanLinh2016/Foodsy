@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -15,7 +16,7 @@ import com.linhnv.foodsy.model.Place;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
     FrameLayout frame_eat, frame_drink, frame_entertaiment, frame_bookmark;
-
+    private EditText edit_text_search;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,10 +29,12 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         frame_drink = (FrameLayout) findViewById(R.id.frame_drink);
         frame_entertaiment = (FrameLayout) findViewById(R.id.frame_entertaiment);
         frame_bookmark = (FrameLayout) findViewById(R.id.frame_bookmark);
+        edit_text_search = (EditText) findViewById(R.id.edit_text_search);
         frame_eat.setOnClickListener(this);
         frame_drink.setOnClickListener(this);
         frame_entertaiment.setOnClickListener(this);
         frame_bookmark.setOnClickListener(this);
+        edit_text_search.setOnClickListener(this);
     }
 
     @Override
@@ -81,6 +84,11 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.frame_bookmark:
                 bundle.putInt("eat", 3);
+                intent.putExtras(bundle);
+                startActivity(intent);
+                break;
+            case R.id.edit_text_search:
+                bundle.putInt("search", 1);
                 intent.putExtras(bundle);
                 startActivity(intent);
                 break;

@@ -26,4 +26,13 @@ public class ApiURL {
     public static final String URL_LOAD_PLACE = "https://foodsyapp.herokuapp.com/api/place";
     //MapFragment
     public static final String URL_PLACE_AROUND = "https://foodsyapp.herokuapp.com/api/place/around";
+    //PlaceDetailActivity
+    public static final String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
+    public static final String URL_COMMENT = "https://foodsyapp.herokuapp.com/api/comment/store";
+    public static final String URL_LOADCOMMENT = "https://foodsyapp.herokuapp.com/api/place";
+    public static final String URL_IMAGE_USER = "https://foodsyapp.herokuapp.com/api/user/photo";
+    public static final String URL_IMAGE_PRODUCT = "https://foodsyapp.herokuapp.com/api/product";
+    //SearchActivity
+    public static final String URL_PLACE = "https://foodsyapp.herokuapp.com/api/place";
+    public static final String URL_IMAGE_PLACE = "https://foodsyapp.herokuapp.com/api/place/photo";
 }

@@ -25,6 +25,7 @@ import com.linhnv.foodsy.fragment.BookmarkFragment;
 import com.linhnv.foodsy.fragment.ViewPagerAdapter;
 import com.linhnv.foodsy.model.SP;
 import com.linhnv.foodsy.model.User;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -75,7 +76,10 @@ public class HomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.app_name);
         }
 
-        int s = getIntent().getExtras().getInt("eat");
+        int s = getIntent().getExtras().getInt("search");
+        if (s == 1){
+            startActivity(new Intent(HomeActivity.this, SearchActivity.class));
+        }
 
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //view pager

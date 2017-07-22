@@ -31,6 +31,7 @@ import com.linhnv.foodsy.adapter.PlaceFoodReviewsAdapter;
 import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.Route;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 import com.squareup.picasso.Picasso;
 
@@ -84,10 +85,6 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
     private PlaceDetailMenuAdapter mPlaceFoodDetailAdapter;
     private PlaceFoodReviewsAdapter mPlaceFoodReviewsAdapter;
 
-    private String URL_PLACE_DETAIL = "https://foodsyapp.herokuapp.com/api/place/menu";
-    private String URL_COMMENT = "https://foodsyapp.herokuapp.com/api/comment/store";
-    private String URL_LOADCOMMENT = "https://foodsyapp.herokuapp.com/api/place";
-    private String url_img = "https://foodsyapp.herokuapp.com/api/user/photo";
     private SP sp;
     double latitude;
     double longitude;
@@ -370,7 +367,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             token = params[0];
             id = params[1];
             HttpHandler sh = new HttpHandler();
-            String jsonStr = sh.makeServiceCall(URL_PLACE_DETAIL +"?token="+token +"&id="+id);
+            String jsonStr = sh.makeServiceCall(ApiURL.URL_PLACE_DETAIL +"?token="+token +"&id="+id);
             Log.e(TAG, "Response from url: " + jsonStr);
             return jsonStr;
         }
@@ -399,12 +396,13 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                 String name = item.getString("name");
                                 String description = item.getString("description");
                                 String photo = item.getString("photo");
+                                String url = ApiURL.URL_IMAGE_PRODUCT + "/"+ id + "/photo?token=" + token;
                                 int price = item.getInt("price");
                                 String type = item.getString("type");
                                 String status_menu = item.getString("status");
                                 int category_id = item.getInt("category_id");
                                 FoodMenu foodmenu = new FoodMenu(
-                                        id, name, description, photo, price, type, status_menu, category_id
+                                        id, name, description, url, price, type, status_menu, category_id
                                 );
                                 list_test2.add(foodmenu);
                             }
@@ -495,7 +493,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             token = params[1];
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(URL_LOADCOMMENT +"/"+id +"/comments?token="+ token);
+            String jsonStr = sh.makeServiceCall(ApiURL.URL_LOADCOMMENT +"/"+id +"/comments?token="+ token);
             Log.e(TAG+"----", "Response from url: " + jsonStr);
             return jsonStr;
         }
@@ -522,7 +520,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
                                 String photo = data.getString("photo");
                                 String rating = data.getString("rating");
                                 int user_id = data.getInt("user_id");
-                                String url = url_img + "/"+ user_id  + "?token=" + token;
+                                String url = ApiURL.URL_IMAGE_USER + "/"+ user_id  + "?token=" + token;
                                 int place_id = data.getInt("place_id");
                                 String status_c = data.getString("status");
                                 String created_at = data.getString("created_at");
@@ -572,7 +570,7 @@ public class PlaceDetailActivity extends BaseActivity implements DirectionFinder
             place_id = params[3];
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(URL_COMMENT); // here is your URL path
+                URL url = new URL(ApiURL.URL_COMMENT); // here is your URL path
 
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("token", token);

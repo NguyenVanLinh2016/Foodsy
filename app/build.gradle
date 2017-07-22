@@ -44,5 +44,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.sharish:ShimmerRecyclerView:v1.0.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
+    compile('com.thomashaertel:multispinner:0.1.1@aar') {
+    }
     testCompile 'junit:junit:4.12'
 }
