@@ -364,7 +364,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
         } else {
             Toasty.error(this, "Bạn không cho phép sử camera lúc này!!", Toast.LENGTH_SHORT).show();
-            //initCameraIntent();
         }
     }
 
@@ -451,8 +450,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     }
     private void setImageBitmap(Bitmap bm) {
         image_avatar.setImageBitmap(bm);
-        //btn_upload.setClickable(true);
-        //btn_upload.setOnClickListener(upload);
     }
     private void execMultipartPost() throws Exception {
         File file = new File(realPath);

@@ -40,13 +40,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         Notifications notifications = notiList.get(position);
         holder.text_nameResNoti.setText(notifications.getPlace_name());
         holder.text_ago_noti.setText(notifications.getTitle());
-        String datetime = notifications.getUpdated_at();
-        //2017-07-09 03:57:21
-        String day = (String) datetime.substring(8,10);
-        String month = (String) datetime.substring(5,7);
-        String year = (String) datetime.substring(0,4);
-        String timer = (String) datetime.substring(11, 16);
-        holder.text_ago_noti.setText(timer +"  "+ day +"-"+ month);
+        holder.text_ago_noti.setText(notifications.getTime_start() +"  "+ notifications.getTime_end());
         holder.text_Des.setText(notifications.getTitle() +"\n"+ notifications.getSale());
         Picasso.with(context).load(notifications.getPhoto()).into(holder.image_noti);
     }
