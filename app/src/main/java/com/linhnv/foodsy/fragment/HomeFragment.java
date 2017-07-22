@@ -33,6 +33,7 @@ import com.linhnv.foodsy.model.RecyclerTouchListenerHome;
 import com.linhnv.foodsy.activity.PlaceDetailActivity;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 
 import org.json.JSONArray;
@@ -58,7 +59,6 @@ import es.dmoral.toasty.Toasty;
  */
 
 public class HomeFragment extends BaseFragment {
-
     private static final String TAG = HomeFragment.class.getSimpleName();
     private RecyclerView recyclerView;
     private PlaceAdapter placeAdapter;
@@ -66,11 +66,6 @@ public class HomeFragment extends BaseFragment {
     private PlaceAdapterShimmer placeAdapterShimmer;
     private SP sp;
     private String url_places = null;
-    private String url_img = "https://foodsyapp.herokuapp.com/api/place/photo";
-    private String url_place_eat = "https://foodsyapp.herokuapp.com/api/place/category/eat";
-    private String url_place_drink = "https://foodsyapp.herokuapp.com/api/place/category/drink";
-    private String url_place_entertain = "https://foodsyapp.herokuapp.com/api/place/category/entertain";
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,11 +79,11 @@ public class HomeFragment extends BaseFragment {
 
         int url_eat = b.getInt("eat");
         if (url_eat == 0) {
-            url_places = url_place_eat;
+            url_places = ApiURL.URL_PLACE_EAT;
         } else if (url_eat == 1) {
-            url_places = url_place_entertain;
+            url_places = ApiURL.URL_PLACE_ENTERTAIN;
         } else if (url_eat == 2) {
-            url_places = url_place_drink;
+            url_places = ApiURL.URL_PLACE_DRINK;
         }else{
 
         }
@@ -184,7 +179,7 @@ public class HomeFragment extends BaseFragment {
                                 Double latitude = b.getDouble("latitude");
                                 Double longitude = b.getDouble("longitude");
                                 int id = b.getInt("id");
-                                String url = url_img + "?token=" + token + "&id=" + id;
+                                String url = ApiURL.URL_IMAGE + "?token=" + token + "&id=" + id;
                                 String price_limit = b.getString("price_limit");
                                 String time_open = b.getString("time_open");
                                 String time_close = b.getString("time_close");

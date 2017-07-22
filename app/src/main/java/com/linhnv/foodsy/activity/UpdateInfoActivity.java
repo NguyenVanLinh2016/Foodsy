@@ -38,6 +38,7 @@ import com.linhnv.foodsy.model.ImageUtils;
 import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.RealPathUtil;
 import com.linhnv.foodsy.model.User;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 import com.linhnv.foodsy.model.SP;
 
@@ -85,8 +86,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     private Button button_update_info;
     private ImageView image_avatar;
     private String token = "";
-    private String url_update_info = "https://foodsyapp.herokuapp.com/api/user/update";
-    private String url_user = "https://foodsyapp.herokuapp.com/api/user/profile";
     //sp
     private SP sp;
     //camera
@@ -209,7 +208,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
             sex = params[5];
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(url_update_info); // here is your URL path
+                URL url = new URL(ApiURL.URL_UPDATE_INFO); // here is your URL path
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("token", token);
                 postDataParams.put("display_name", fullname);
@@ -483,7 +482,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
                                 .build();
 
                         Request request = new Request.Builder()
-                                .url(url_update_info)
+                                .url(ApiURL.URL_UPDATE_INFO)
                                 .post(requestBody)
                                 .build();
 

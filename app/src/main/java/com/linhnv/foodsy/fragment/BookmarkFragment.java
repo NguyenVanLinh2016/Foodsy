@@ -23,6 +23,7 @@ import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.RecyclerTouchListenerHome;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 
 import org.json.JSONArray;
@@ -45,8 +46,6 @@ public class BookmarkFragment extends BaseFragment {
     private List<Places> placeList;
     private SP sp;
     private List<Integer> listId;
-    private String url_place_bookmark = "https://foodsyapp.herokuapp.com/api/place";
-    private String url_img = "https://foodsyapp.herokuapp.com/api/place/photo";
     private String token;
 
     @Override
@@ -178,7 +177,7 @@ public class BookmarkFragment extends BaseFragment {
             token = params[1];
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_place_bookmark +"/"+id + "?token="+ token);
+            String jsonStr = sh.makeServiceCall(ApiURL.URL_PLACE_BOOKMARK +"/"+id + "?token="+ token);
             Log.e(TAG+"----", "Response from url: " + jsonStr);
             return jsonStr;
         }
@@ -205,7 +204,7 @@ public class BookmarkFragment extends BaseFragment {
                             String phone_number = data.getString("phone_number");
                             String email = data.getString("email");
                             String photo = data.getString("photo");
-                            String url = url_img + "?token=" + token + "&id=" + id;
+                            String url = ApiURL.URL_PLACE_IMAGE + "?token=" + token + "&id=" + id;
                             String price_limit = data.getString("price_limit");
                             String time_open = data.getString("time_open");
                             String time_close = data.getString("time_close");

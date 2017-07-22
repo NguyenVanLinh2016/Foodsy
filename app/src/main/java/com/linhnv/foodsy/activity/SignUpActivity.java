@@ -32,6 +32,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 
 import org.json.JSONException;
@@ -67,9 +68,6 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
     private int status = 0;
     AccessToken accessToken = AccountKit.getCurrentAccessToken();
     public static int APP_REQUEST_CODE = 99;
-    private String url_register = "https://foodsyapp.herokuapp.com/api/auth/register";
-    private String url_signin_social = "https://foodsyapp.herokuapp.com/api/auth/login/social";
-    private String url_get_profile = "https://foodsyapp.herokuapp.com/api/user/profile";
     private String phoneNumberString = "";
     //facebook
     private LoginButton button_login_fb_signup;
@@ -205,7 +203,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             password = params[1];
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(url_register); // here is your URL path
+                URL url = new URL(ApiURL.URL_REGISTER); // here is your URL path
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("username", username);
                 postDataParams.put("password", password);
@@ -291,7 +289,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
             username = params[0];
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(url_signin_social); // here is your URL path
+                URL url = new URL(ApiURL.URL_SIGNIN_SOCIAL); // here is your URL path
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("username", username);
                 Log.e("params", postDataParams.toString());
@@ -445,7 +443,7 @@ public class SignUpActivity extends BaseActivity implements View.OnClickListener
         protected String doInBackground(String... params) {
             token = params[0];
             httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall(url_get_profile + "?token=" + token);
+            String jsonStr = httpHandler.makeServiceCall(ApiURL.URL_GET_PROFILE + "?token=" + token);
             return jsonStr;
         }
 

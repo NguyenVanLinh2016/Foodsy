@@ -17,6 +17,7 @@ import com.linhnv.foodsy.model.DrawsLineItem;
 import com.linhnv.foodsy.model.Notifications;
 import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 
 import org.json.JSONArray;
@@ -36,8 +37,6 @@ public class NotificationFragment extends BaseFragment {
     private RecyclerView recyclerView;
     private List<Notifications> list;
     private NotificationsAdapter adapter;
-    private static final String URL_NOTIFICATIONS = "https://foodsyapp.herokuapp.com/api/event/available";
-    private String URL_LOADIMAGE = "https://foodsyapp.herokuapp.com/api/event/";
     private SP sp;
 
     @Nullable
@@ -75,7 +74,7 @@ public class NotificationFragment extends BaseFragment {
         protected String doInBackground(String... params) {
             token = params[0];
             httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall(URL_NOTIFICATIONS + "?token=" + token);
+            String jsonStr = httpHandler.makeServiceCall(ApiURL.URL_NOTIFICATIONS + "?token=" + token);
             return jsonStr;
         }
 
@@ -97,7 +96,7 @@ public class NotificationFragment extends BaseFragment {
                             String title = data.getString("title");
                             String content = data.getString("content");
                             String photo = data.getString("photo");
-                            String url = URL_LOADIMAGE + id + "/photo" + "?token=" + token;
+                            String url = ApiURL.URL_LOADIMAGE + id + "/photo" + "?token=" + token;
                             String sale = data.getString("sale");
                             String time_start = data.getString("time_start");
                             String time_end = data.getString("time_end");

@@ -54,6 +54,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.linhnv.foodsy.model.PrefManager;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 
 import org.json.JSONException;
@@ -70,10 +71,6 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
     AccessToken accessToken = AccountKit.getCurrentAccessToken();
     public static int APP_REQUEST_CODE = 99;
     private static final String TAG = SignInActivity.class.getSimpleName();
-    private int status = 0;
-    private String url_signin = "https://foodsyapp.herokuapp.com/api/auth/login";
-    private String url_signin_social = "https://foodsyapp.herokuapp.com/api/auth/login/social";
-    private String url_get_profile = "https://foodsyapp.herokuapp.com/api/user/profile";
     private String phoneNumberString = "";
     private String token = "";
     //facebook
@@ -226,7 +223,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             password = params[1];
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(url_signin); // here is your URL path
+                URL url = new URL(ApiURL.URL_SIGNIN); // here is your URL path
 
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("username", username);
@@ -315,7 +312,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
             username = params[0];
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(url_signin_social); // here is your URL path
+                URL url = new URL(ApiURL.URL_SIGNIN_SOCIAL); // here is your URL path
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("username", username);
                 Log.e("params", postDataParams.toString());
@@ -465,7 +462,7 @@ public class SignInActivity extends BaseActivity implements View.OnClickListener
         protected String doInBackground(String... params) {
             token = params[0];
             httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall(url_get_profile +"?token="+token);
+            String jsonStr = httpHandler.makeServiceCall(ApiURL.URL_GET_PROFILE +"?token="+token);
             return jsonStr;
         }
 

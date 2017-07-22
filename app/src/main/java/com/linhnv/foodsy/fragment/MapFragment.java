@@ -38,6 +38,7 @@ import com.linhnv.foodsy.model.Place;
 import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.Route;
 import com.linhnv.foodsy.model.SP;
+import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
 
 import org.json.JSONArray;
@@ -68,18 +69,11 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
     GoogleMap mGoogleMap;
     private MapView mMapView;
     private SP sp;
-    private boolean flag = false;
-    private static final String URL_PLACE_AROUND = "https://foodsyapp.herokuapp.com/api/place/around";
     double latitude, longitude;
     private List<Places> listPlace;
     private List<Marker> originMarkers = new ArrayList<>();
     private List<Marker> destinationMakers = new ArrayList<>();
     private List<Polyline> polylinePaths = new ArrayList<>();
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     private void init(){
         sp = new SP(getActivity());
@@ -115,12 +109,6 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
             }
         });
         return view;
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
     }
 
     @Override
@@ -193,7 +181,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
             latitude = params[1];
             longitude = params[2];
             httpHandler = new HttpHandler();
-            String jsonStr = httpHandler.makeServiceCall(URL_PLACE_AROUND +"?token="+token+"&latitude="+latitude+"&longitude="+longitude);
+            String jsonStr = httpHandler.makeServiceCall(ApiURL.URL_PLACE_AROUND +"?token="+token+"&latitude="+latitude+"&longitude="+longitude);
             return jsonStr;
         }
 
