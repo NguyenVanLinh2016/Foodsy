@@ -23,7 +23,6 @@ public class ApiURL {
     //NotificationFragment
     public static final String URL_NOTIFICATIONS = "https://foodsyapp.herokuapp.com/api/event/available";
     public static final String URL_LOADIMAGE = "https://foodsyapp.herokuapp.com/api/event/";
-    public static final String URL_LOAD_PLACE = "https://foodsyapp.herokuapp.com/api/place";
     //MapFragment
     public static final String URL_PLACE_AROUND = "https://foodsyapp.herokuapp.com/api/place/around";
 }
