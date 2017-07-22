@@ -5,61 +5,76 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.Place;
+import com.linhnv.foodsy.model.Places;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by linhnv on 10/06/2017.
  */
 
-public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchViewHolder> {
+public class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> implements Filterable {
 
-    private List<Place> mPlaceList;
-    private Context mContext;
-    private LayoutInflater mLayoutInflater;
-    public SearchAdapter(Context context, List<Place> data){
-        this.mContext = context;
-        this.mPlaceList = data;
-        this.mLayoutInflater = LayoutInflater.from(context);
+    Context c;
+    ArrayList<Places> places, filterList;
+    CustomFilter filter;
+
+    public SearchAdapter(Context context, ArrayList<Places> places) {
+        this.c = context;
+        this.places = places;
+        this.filterList = places;
     }
+
     @Override
     public SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = mLayoutInflater.inflate(R.layout.row_item_search, parent, false);
-        return new SearchViewHolder(itemView);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_item_search, null);
+        SearchViewHolder searchViewHolder = new SearchViewHolder(v);
+        return searchViewHolder;
     }
 
     @Override
     public void onBindViewHolder(SearchViewHolder holder, int position) {
-        Place place = mPlaceList.get(position);
-        holder.mNamePlace.setText(place.getNameRestaurant());
-        holder.mAddress.setText(place.getAddress());
-        holder.mCategory.setText(place.getCategory());
-        holder.mAgo.setText(place.getAgo() + " km");
-        holder.mRanks.setText(place.getRank() +"");
+        holder.mNamePlace.setText(places.get(position).getDisplay_name());
+        holder.mAddress.setText(places.get(position).getAddress());
+        holder.mPriceLimit.setText("Mức giá: " + places.get(position).getPrice_limit());
+        holder.mAgo.setText(places.get(position).getMinutes() + " phút");
+//        holder.mRanks.setText(place.getPrice_limit());
     }
+
 
     @Override
     public int getItemCount() {
-        return mPlaceList.size();
+        return places.size();
     }
 
-    class SearchViewHolder extends RecyclerView.ViewHolder{
+
+    /*class SearchViewHolder extends RecyclerView.ViewHolder{
         private ImageView mPhoto;
-        private TextView mNamePlace, mAddress, mCategory, mAgo, mRanks;
+        private TextView mNamePlace, mAddress, mPriceLimit, mAgo, mRanks;
         public SearchViewHolder(View itemView) {
             super(itemView);
 
             mPhoto = (ImageView) itemView.findViewById(R.id.image_view_photo_search);
             mNamePlace = (TextView) itemView.findViewById(R.id.text_view_namePlace_search);
             mAddress = (TextView) itemView.findViewById(R.id.text_view_address_search);
-            mCategory = (TextView) itemView.findViewById(R.id.text_view_caterogy_search);
+            mPriceLimit = (TextView) itemView.findViewById(R.id.text_view_pricelimit_search);
             mAgo = (TextView) itemView.findViewById(R.id.text_view_ago_search);
             mRanks = (TextView) itemView.findViewById(R.id.text_view_ranks_search);
         }
+    }*/
+    @Override
+    public Filter getFilter() {
+        if (filter == null) {
+            filter = new CustomFilter(filterList, this);
+        }
+        return filter;
     }
 }

@@ -89,13 +89,14 @@ public class SP {
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE, PREFS_MODE);
         return user.getString(KEY_TOKEN, "");
     }
-    public void setUser(String value){
-        SharedPreferences prefs = _context.getSharedPreferences(PREFS_FILE_USER, PREFS_MODE);
-        SharedPreferences.Editor editor = prefs.edit();
-        // write state login
-        editor.putString(KEY_USER_INFO, value);
-        editor.commit();
-    }
+    public void setUser(String object){
+               SharedPreferences mPreferences = _context.getSharedPreferences(PREFS_FILE_USER, PREFS_MODE);
+               SharedPreferences.Editor preEditor = mPreferences.edit();
+               Gson gson = new Gson();
+               String json = gson.toJson(object);
+               preEditor.putString(KEY_USER_INFO, json);
+               preEditor.commit();
+           }
     public String getUser(){
         SharedPreferences user = _context.getSharedPreferences(PREFS_FILE_USER, PREFS_MODE);
         return user.getString(KEY_USER_INFO, "");

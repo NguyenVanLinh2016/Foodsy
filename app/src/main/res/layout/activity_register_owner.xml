@@ -4,49 +4,92 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary1"
     tools:context="com.linhnv.foodsy.activity.RegisterOwnerActivity">
 
+
     <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
+        android:id="@+id/image_restaurant_product"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="@dimen/margin_32dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/camera"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/edit_text_displayname"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
+        android:background="@drawable/textview_ui1"
+        android:ems="10"
+
+        android:hint="Tên nhà hàng"
+        android:inputType="text"
+        android:padding="@dimen/margin_10dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/logo" />
+        app:layout_constraintTop_toBottomOf="@+id/image_restaurant_product" />
 
-    <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/edit_text_phone_number"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="24dp"
-        android:gravity="center"
-        android:padding="@dimen/activity_vertical_margin"
-        android:text="Bạn muốn đăng ký thành chủ cửa hàng!"
-        android:textColor="@color/colorWhite"
-        android:textSize="24sp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/textview_ui1"
+        android:ems="10"
+        android:hint="Điện thoại"
+        android:inputType="phone"
+        android:padding="@dimen/margin_10dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_displayname" />
 
-    <Button
-        android:id="@+id/btn_registerowner"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/edit_text_address"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="16dp"
-        android:text="Đăng ký ngay"
-        android:textColor="@color/colorWhite"
-        android:theme="@style/MyButton"
-        app:layout_constraintHorizontal_bias="0.501"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/textview_ui1"
+        android:ems="10"
+        android:hint="Địa chỉ"
+        android:inputType="text"
+        android:padding="@dimen/margin_10dp"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView2" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_phone_number" />
+    <com.thomashaertel.widget.MultiSpinner
+        android:id="@+id/sp_category"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:textSize="17dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_address" />
+    <!--<Spinner
+        android:id="@+id/sp_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:ems="10"
+        android:padding="@dimen/margin_10dp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_text_address" />-->
 </android.support.constraint.ConstraintLayout>

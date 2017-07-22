@@ -48,11 +48,10 @@ public class HomeActivity extends AppCompatActivity
                 case R.id.navigation_home:
                     viewPager.setCurrentItem(0);
                     return true;
-                case R.id.navigation_search:
+                case R.id.navigation_bookmark:
                     viewPager.setCurrentItem(1);
                     return true;
                 case R.id.navigation_notifications:
-                    viewPager.setCurrentItem(2);
                     return true;
                 case R.id.navigation_maps:
                     viewPager.setCurrentItem(3);
@@ -75,8 +74,10 @@ public class HomeActivity extends AppCompatActivity
             getSupportActionBar().setTitle(R.string.app_name);
         }
 
-        int s = getIntent().getExtras().getInt("eat");
-
+        int s = getIntent().getExtras().getInt("search");
+        if (s == 1){
+            startActivity(new Intent(HomeActivity.this, SearchActivity.class));
+        }
         bottomNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         //view pager
         setupViewPager(viewPager);
@@ -166,7 +167,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
     private void checkRoleUser() {
-        Log.e("role", role);
+        Log.e("role", sp.getUser());
         navigationView.setNavigationItemSelectedListener(this);
         Menu menu  = navigationView.getMenu();
         MenuItem owner, admin, user;
@@ -239,11 +240,12 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
+            viewPager.setCurrentItem(0);
             // Handle the camera action
         } else if (id == R.id.nav_bookmark) {
-
+            viewPager.setCurrentItem(1);
         } else if (id == R.id.nav_location) {
-
+            viewPager.setCurrentItem(3);
         } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_share) {
