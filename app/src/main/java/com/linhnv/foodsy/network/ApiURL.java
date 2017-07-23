@@ -35,4 +35,9 @@ public class ApiURL {
     //SearchActivity
     public static final String URL_PLACE = "https://foodsyapp.herokuapp.com/api/place";
     public static final String URL_IMAGE_PLACE = "https://foodsyapp.herokuapp.com/api/place/photo";
+    //HomeActivity
+    public static final String URL_GET_PHOTO = "https://foodsyapp.herokuapp.com/api/user/photo";
+    public static final String URL_REGISTER_OWNER = "https://foodsyapp.herokuapp.com/api/user/owner/register";
+    //OwnerRegisterFragment
+    public static final String URL_GET_OWNER = "https://foodsyapp.herokuapp.com/api/user/admin/owner";
 }

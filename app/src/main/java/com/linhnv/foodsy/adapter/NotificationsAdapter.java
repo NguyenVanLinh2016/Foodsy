@@ -41,7 +41,7 @@ public class NotificationsAdapter extends RecyclerView.Adapter<NotificationsAdap
         holder.text_nameResNoti.setText(notifications.getPlace_name());
         holder.text_ago_noti.setText(notifications.getTitle());
         holder.text_ago_noti.setText(notifications.getTime_start() +"  "+ notifications.getTime_end());
-        holder.text_Des.setText(notifications.getTitle() +"\n"+ notifications.getSale());
+        holder.text_Des.setText(notifications.getTitle() +"\n"+ notifications.getContent());
         Picasso.with(context).load(notifications.getPhoto()).into(holder.image_noti);
     }
 

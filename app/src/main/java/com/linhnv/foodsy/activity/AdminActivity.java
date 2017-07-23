@@ -10,7 +10,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.linhnv.foodsy.R;
-import com.linhnv.foodsy.fragment.OwnerRegister;
+import com.linhnv.foodsy.fragment.OwnerRegisterFragment;
 import com.linhnv.foodsy.fragment.PlacesPending;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class AdminActivity extends AppCompatActivity {
     }
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new OwnerRegister(), "Owner Register");
+        adapter.addFragment(new OwnerRegisterFragment(), "Owner Register");
         adapter.addFragment(new PlacesPending(), "Places Pending");
         viewPager.setAdapter(adapter);
     }

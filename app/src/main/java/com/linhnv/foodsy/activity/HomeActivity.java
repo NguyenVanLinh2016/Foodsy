@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.linhnv.foodsy.R;
@@ -25,6 +26,7 @@ import com.linhnv.foodsy.fragment.BookmarkFragment;
 import com.linhnv.foodsy.fragment.ViewPagerAdapter;
 import com.linhnv.foodsy.model.SP;
 import com.linhnv.foodsy.model.User;
+import com.linhnv.foodsy.network.ApiURL;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -39,9 +41,12 @@ public class HomeActivity extends AppCompatActivity
     private MenuItem menuItem;
     private SP sp;
     NavigationView navigationView;
-    Toolbar toolbar;
-    TextView txtNameUser, txtEmailUser;
-    String username, display_name, email, phone_number, address, gender, role, status;
+    private Toolbar toolbar;
+    private TextView txtNameUser, txtEmailUser;
+    private int id;
+    private String username, display_name, email, phone_number, address, gender, role, status;
+    private String token;
+    private ImageView imageView;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -70,7 +75,7 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         init();
         sp = new SP(this);
-
+        token = sp.getToken();
         if (toolbar != null) {
             setSupportActionBar(toolbar);
             getSupportActionBar().setTitle(R.string.app_name);
@@ -135,12 +140,14 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
         String user = sp.getUser();
+        imageView = (ImageView) header.findViewById(R.id.imageView);
         JSONObject root = new JSONObject(user);
 
         txtNameUser = (TextView) header.findViewById(R.id.txtNameUser);
         txtEmailUser = (TextView) header.findViewById(R.id.txtEmailUser);
         JSONObject jsonObject = root.getJSONObject("data");
         User u = new User();
+        id = jsonObject.getInt("id");
         username = jsonObject.getString("username");
         display_name = jsonObject.getString("display_name");
         email = jsonObject.getString("email");
@@ -159,9 +166,14 @@ public class HomeActivity extends AppCompatActivity
         u.setRole(role);
         u.setStatus(status);
 
-        if (email == null) {
+        Picasso.with(this)
+                .load(ApiURL.URL_GET_PHOTO +"/"+ id+ "?token=" + token)
+                .placeholder(R.drawable.bg_button2)
+                .error(R.drawable.bg_button2)
+                .into(imageView);
+        if (email.equals(null)) {
             txtNameUser.setText(username);
-            txtEmailUser.setText("no email register");
+            txtEmailUser.setText(phone_number);
         } else {
             txtNameUser.setText(username);
             txtEmailUser.setText(email);

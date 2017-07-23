@@ -283,15 +283,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-//            Bundle extras = data.getExtras();
-//            Bitmap imageBitmap = (Bitmap) extras.get("data");
-//            image_avatar.setImageBitmap(imageBitmap);
-//        }
-//    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -354,7 +345,6 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
     //take a picture
     @TargetApi(Build.VERSION_CODES.M)
     private void initCameraPermission() {
-
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
                 && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
         {
@@ -363,7 +353,7 @@ public class UpdateInfoActivity extends BaseActivity implements View.OnClickList
             }
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
         } else {
-            Toasty.error(this, "Bạn không cho phép sử camera lúc này!!", Toast.LENGTH_SHORT).show();
+            initCameraIntent();
         }
     }
 

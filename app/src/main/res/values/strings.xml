@@ -125,4 +125,8 @@
     <string name="button_send">Gửi</string>
     <string name="title_message">ĐÁNH GIÁ</string>
     <string name="dialog_cancle">Huỷ</string>
+    <!--RegisterOwner-->
+    <string name="place_name">Tên nhà hàng, quán ăn,...</string>
+    <string name="place_phonenumber">Số điện thoại</string>
+    <string name="place_address">Địa chỉ</string>
 </resources>
