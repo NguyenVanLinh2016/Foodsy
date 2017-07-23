@@ -87,10 +87,10 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
     private int category_id;
     //camera
     private final CharSequence[] items = {"Chụp ảnh", "Tải ảnh lên"};
-    private static final int REQUEST_CAMERA = 1001;
+    private static final int REQUEST_CAMERA = 1003;
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
-    private static final int REQUEST_GALLERY = 1002;
+    private static final int REQUEST_GALLERY = 1004;
     private Uri selectedImageUri;
     private Bitmap mBitmap;
     private File actualImage;
@@ -303,7 +303,8 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
         String timeStamp = new SimpleDateFormat("yyyyHHdd_HHmmss").format(new Date());
         File mediaFile;
         if (type == 1) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_" + timeStamp + ".png");
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_OWNER" +
+                    "" + timeStamp + ".png");
         } else {
             return null;
         }

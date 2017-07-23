@@ -40,4 +40,5 @@ public class ApiURL {
     public static final String URL_REGISTER_OWNER = "https://foodsyapp.herokuapp.com/api/user/owner/register";
     //OwnerRegisterFragment
     public static final String URL_GET_OWNER = "https://foodsyapp.herokuapp.com/api/user/admin/owner";
+    public static final String URL_ACCEPTION_OWNER = "https://foodsyapp.herokuapp.com/api/user/admin/acception";
 }
