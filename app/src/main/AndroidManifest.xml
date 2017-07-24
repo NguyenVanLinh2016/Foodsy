@@ -40,9 +40,6 @@
             android:screenOrientation="portrait" />
 
         <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/FACEBOOK_APP_ID" />
-        <meta-data
             android:name="com.facebook.accountkit.ApplicationName"
             android:value="@string/app_name" />
         <meta-data
@@ -91,18 +88,33 @@
             android:name=".activity.PlaceDetailActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".activity.BaseActivity" />
-        <activity android:name=".activity.SplashActivity"></activity>
-        <activity android:name=".activity.RegisterOwnerActivity"></activity>
-        <activity android:name=".activity.PlacesOwnerActivity"></activity>
-        <activity android:name=".activity.AddplaceActivity"></activity>
-        <activity android:name=".activity.AdminActivity"></activity>
-        <activity android:name=".activity.ManagerActivity"></activity>
-        <activity android:name=".activity.ProductActivity"></activity>
-        <activity android:name=".activity.ProductCategories"></activity>
-        <uses-feature
-            android:name="android.hardware.camera"
-            android:required="true" />
-        <activity android:name=".activity.MapActivity"/>
+        <activity
+            android:name=".activity.SplashActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.RegisterOwnerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.PlacesOwnerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.AddplaceActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.AdminActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ManagerActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ProductActivity"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.ProductCategories"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MapActivity"
+            android:screenOrientation="portrait"/>
     </application>
 
 </manifest>

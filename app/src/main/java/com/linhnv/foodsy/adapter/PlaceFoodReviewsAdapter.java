@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
-import com.google.android.gms.location.places.Place;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.PlaceFoodReviews;
 import com.squareup.picasso.Picasso;
