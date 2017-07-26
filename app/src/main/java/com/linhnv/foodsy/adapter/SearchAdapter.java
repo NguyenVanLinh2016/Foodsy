@@ -10,6 +10,7 @@ import android.widget.Filterable;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.Places;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -42,6 +43,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchViewHolder> implem
         holder.mAddress.setText(places.get(position).getAddress());
         holder.mPriceLimit.setText("Mức giá: " + places.get(position).getPrice_limit());
         holder.mAgo.setText(places.get(position).getMinutes() + " phút");
+        Picasso.with(c)
+                .load(places.get(position).getPhoto())
+                .placeholder(R.drawable.bglogin5)
+                .error(R.drawable.bglogin5)
+                .into(holder.mPhoto);
 //        holder.mRanks.setText(place.getPrice_limit());
     }
 

@@ -206,7 +206,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                             String city = data.getString("city");
                             String phone_number = data.getString("phone_number");
                             String email = data.getString("email");
-                            String photo = data.getString("photo");
+                            String url = ApiURL.URL_IMAGE + "?token=" + token + "&id=" + id;
                             String price_limit = data.getString("price_limit");
                             String time_open = data.getString("time_open");
                             String time_close = data.getString("time_close");
@@ -223,7 +223,7 @@ public class MapFragment extends BaseFragment implements DirectionFinderListener
                                     city,
                                     phone_number,
                                     email,
-                                    photo,
+                                    url,
                                     price_limit,
                                     time_open,
                                     time_close,

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -19,21 +20,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         //check user, if already update info -> go to MenuActivity
+        init();
         sp = new SP(this);
         if (sp.getStateLogin()) {
             startActivity(new Intent(MainActivity.this, MenuActivity.class));
             finish();
         }
-
-        anhXa();
-        btnSignUp.setOnClickListener(this);
-        btnSignIn.setOnClickListener(this);
     }
-    public void anhXa(){
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (sp.getStateLogin()) {
+            startActivity(new Intent(MainActivity.this, MenuActivity.class));
+            finish();
+        }
+    }
+
+    public void init(){
         btnSignUp = (Button) findViewById(R.id.btnSignUp);
         btnSignIn = (Button) findViewById(R.id.btnSignIn);
+        btnSignUp.setOnClickListener(this);
+        btnSignIn.setOnClickListener(this);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.linhnv.foodsy.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.fragment.HomeFragment;
@@ -63,7 +66,6 @@ public class HomeActivity extends AppCompatActivity
                 case R.id.navigation_maps:
                     viewPager.setCurrentItem(3);
                     return true;
-
             }
             return false;
         }
@@ -253,7 +255,37 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        switch (id){
+            case R.id.nav_register_admin:
+                startActivity(new Intent(HomeActivity.this, RegisterOwnerActivity.class));
+                break;
+            case R.id.nav_owner:
+                startActivity(new Intent(HomeActivity.this, PlacesOwnerActivity.class));
+                break;
+            case R.id.nav_admin:
+                startActivity(new Intent(HomeActivity.this, AdminActivity.class));
+                break;
+            case R.id.log_out:
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(HomeActivity.this);
+                alertDialog.setTitle("Xác nhận");
+                alertDialog.setMessage("Bạn có muốn đăng xuất khỏi tài khoản này?");
+                alertDialog.setPositiveButton(R.string.dialog_button_Ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        sp.setStateLogin(false);
+                        startActivity(new Intent(HomeActivity.this, MainActivity.class));
+                        finish();
+                    }
+                });
+                alertDialog.setNegativeButton(R.string.dialog_button_Cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                alertDialog.create().show();
+                break;
+        }
         if (id == R.id.nav_home) {
             // Handle the camera action
         } else if (id == R.id.nav_bookmark) {
@@ -267,11 +299,7 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_register_admin) {
-            startActivity(new Intent(HomeActivity.this, RegisterOwnerActivity.class));
-        } else if (id == R.id.nav_owner) {
-            startActivity(new Intent(HomeActivity.this, PlacesOwnerActivity.class));
-        } else if (id == R.id.nav_admin) {
-            startActivity(new Intent(HomeActivity.this, AdminActivity.class));
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

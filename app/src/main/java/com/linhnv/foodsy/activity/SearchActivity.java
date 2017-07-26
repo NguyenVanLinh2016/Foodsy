@@ -164,7 +164,7 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                                 Double latitude = b.getDouble("latitude");
                                 Double longitude = b.getDouble("longitude");
                                 int id = b.getInt("id");
-                                String url = ApiURL.URL_IMAGE_PLACE + "?token=" + token + "&id=" + id;
+                                String url = ApiURL.URL_IMAGE + "?token=" + token + "&id=" + id;
                                 String price_limit = b.getString("price_limit");
                                 String time_open = b.getString("time_open");
                                 String time_close = b.getString("time_close");
