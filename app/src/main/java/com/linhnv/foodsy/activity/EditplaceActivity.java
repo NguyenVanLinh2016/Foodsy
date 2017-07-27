@@ -11,13 +11,13 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,10 +31,12 @@ import android.widget.Toast;
 import com.linhnv.foodsy.R;
 import com.linhnv.foodsy.model.Category;
 import com.linhnv.foodsy.model.ImageUtils;
+import com.linhnv.foodsy.model.Places;
 import com.linhnv.foodsy.model.RealPathUtil;
 import com.linhnv.foodsy.model.SP;
 import com.linhnv.foodsy.network.ApiURL;
 import com.linhnv.foodsy.network.HttpHandler;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,90 +72,64 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class RegisterOwnerActivity extends BaseActivity implements View.OnClickListener {
-    private static final String TAG = RegisterOwnerActivity.class.getSimpleName();
-    private String url_register = "https://foodsyapp.herokuapp.com/api/user/owner/register";
-    private String url_category = "https://foodsyapp.herokuapp.com/api/category/place";
-    private ImageView image_restaurant_product;
-    private EditText edit_text_displayname, edit_text_phone_number,edit_text_address;
-    private Button button_register_owner;
+import static com.linhnv.foodsy.activity.UpdateInfoActivity.EMAIL_ADDRESS_PATTERN;
+
+public class EditplaceActivity extends BaseActivity implements View.OnClickListener {
+    private static final String TAG = EditplaceActivity.class.getSimpleName();
     private SP sp;
+    private EditText ed_display_name, ed_description, ed_address, ed_phone_number, ed_email, ed_price_limit, ed_time_open, ed_time_close, ed_wifi_password;
+    private String latitude;
+    private String longitude;
+    private int user_id;
     private Spinner sp_category;
-    List<Category> categoryList;
+    private Button btn_registerplaces, btn_clear;
     private int category_id;
+    List<Category> categoryList;
+    ImageView img_location, image_add_places;
+
     //camera
     private final CharSequence[] items = {"Chụp ảnh", "Tải ảnh lên"};
-    private static final int REQUEST_CAMERA = 1003;
+    private static final int REQUEST_CAMERA = 1005;
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 2;
-    private static final int REQUEST_GALLERY = 1004;
+    private static final int REQUEST_GALLERY = 1006;
     private Uri selectedImageUri;
     private Bitmap mBitmap;
     private File actualImage;
-
+    String realPath = "";
+    String id_places;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_register_owner);
+        setContentView(R.layout.activity_addplace);
+        int id_get = getIntent().getExtras().getInt("id");
+        id_places = String.valueOf(id_get);
         init();
-        sp = new SP(this);
-        final String token = sp.getToken();
         categoryList = new ArrayList<>();
-        new RegisterOwner().execute(token);
+        sp = new SP(this);
+        String token = sp.getToken();
+        new RegisterAddActivity().execute(token);
+        btn_registerplaces.setOnClickListener(this);
+        btn_clear.setOnClickListener(this);
+        img_location.setOnClickListener(this);
+        image_add_places.setOnClickListener(this);
         sp_category.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 category_id = position + 1;
             }
+
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        new GetPlaces().execute(token);
+        //location();
+
+
     }
 
-    private void init() {
-        sp_category = (Spinner) findViewById(R.id.sp_category);
-        image_restaurant_product = (ImageView) findViewById(R.id.image_add_places);
-        edit_text_displayname = (EditText) findViewById(R.id.edit_text_displayname);
-        edit_text_phone_number = (EditText) findViewById(R.id.edit_text_phone_number);
-        edit_text_address = (EditText) findViewById(R.id.edit_text_address);
-        button_register_owner = (Button) findViewById(R.id.button_register_owner);
-        image_restaurant_product.setOnClickListener(this);
-        button_register_owner.setOnClickListener(this);
-    }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.image_add_places:
-                openFileChooserDialog();
-                break;
-            case R.id.button_register_owner:
-                String token = sp.getToken();
-                String display_name = edit_text_displayname.getText().toString();
-                String phone_number = edit_text_phone_number.getText().toString();
-                String address = edit_text_address.getText().toString();
-                if (display_name.length() == 0){
-                    edit_text_displayname.setError("Bạn chưa nhập tên nhà hàng, quán ăn,...");
-                    edit_text_displayname.requestFocus();
-                }else if (phone_number.length() == 0){
-                    edit_text_phone_number.setError("Bạn chưa nhập số điện thoại");
-                    edit_text_phone_number.requestFocus();
-                }else if (address.length() == 0){
-                    edit_text_address.setError("Bạn chưa nhập địa chỉ");
-                    edit_text_address.requestFocus();
-                }else{
-                    try {
-                        execMultipartPost();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    new RegisterOwnerPlace().execute(token, display_name, phone_number, address, String.valueOf(category_id));
-                }
-                break;
-        }
-    }
-
-    public class RegisterOwner extends AsyncTask<String, Void, String> {
+    public class RegisterAddActivity extends AsyncTask<String, Void, String> {
         String token;
 
         @Override
@@ -167,7 +143,7 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
             token = params[0];
             HttpHandler sh = new HttpHandler();
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url_category + "?token=" + token);
+            String jsonStr = sh.makeServiceCall(ApiURL.url_category + "?token=" + token);
             Log.e("Response", "Response from url: " + jsonStr);
             return jsonStr;
         }
@@ -179,7 +155,7 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
             Log.e("TEST", result.toString());
             if (result != null) {
                 if (result.equals("405")) {
-                    Toasty.error(RegisterOwnerActivity.this, "Loading error", Toast.LENGTH_SHORT).show();
+                    Toasty.error(EditplaceActivity.this, "Loading error", Toast.LENGTH_SHORT).show();
                 } else {
                     try {
                         JSONObject root = new JSONObject(result);
@@ -209,14 +185,34 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
             }
         }
     }
-    private void setSpinner(){
+
+    private void setSpinner() {
         List<String> list = new ArrayList<>();
-        for (int i=0; i< categoryList.size(); i++){
+        for (int i = 0; i < categoryList.size(); i++) {
             list.add(categoryList.get(i).getName());
         }
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, list);
         sp_category.setAdapter(adapter);
     }
+
+    private void init() {
+        ed_display_name = (EditText) findViewById(R.id.edit_text_nameproduct);
+        ed_description = (EditText) findViewById(R.id.edit_text_descriptionproduct);
+        ed_address = (EditText) findViewById(R.id.edit_text_address);
+        ed_phone_number = (EditText) findViewById(R.id.edit_text_phone);
+        ed_email = (EditText) findViewById(R.id.edit_text_email);
+        ed_price_limit = (EditText) findViewById(R.id.edit_text_price_limit);
+        ed_time_open = (EditText) findViewById(R.id.edit_text_time_open);
+        ed_time_close = (EditText) findViewById(R.id.edit_text_time_close);
+        ed_wifi_password = (EditText) findViewById(R.id.edit_text_wifi_restaurants);
+        sp_category = (Spinner) findViewById(R.id.sp_category2);
+        btn_registerplaces = (Button) findViewById(R.id.btn_registerplaces2);
+        btn_clear = (Button) findViewById(R.id.btn_clear2);
+        img_location = (ImageView) findViewById(R.id.img_location);
+        image_add_places = (ImageView) findViewById(R.id.image_add_places);
+
+    }
+
     private void openFileChooserDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Chọn ảnh");
@@ -237,46 +233,19 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
         });
         builder.show();
     }
+
     //take a picture
     @TargetApi(Build.VERSION_CODES.M)
     private void initCameraPermission() {
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
-        {
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                Log.d(TAG, "Permission to use Camera");
+                Log.d("Permission", "Permission to use Camera");
             }
             requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CAMERA_PERMISSION);
         } else {
             initCameraIntent();
         }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initCameraIntent();
-            } else {
-                Toast.makeText(this, "Bạn không cho phép sử camera lúc này!!", Toast.LENGTH_SHORT).show();
-            }
-        } else if (requestCode == REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION){
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                initGalleryIntent();
-            } else {
-                Toast.makeText(this, "Bạn không cho phép sử ghi hình ảnh lúc này!!", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else {
-            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    private void initGalleryIntent() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(intent, REQUEST_GALLERY);
     }
 
     private void initCameraIntent() {
@@ -288,6 +257,7 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
             startActivityForResult(intent, REQUEST_CAMERA);
         }
     }
+
     private File getOutputMediafile(int type) {
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), getResources().getString(R.string.app_name)
@@ -300,7 +270,7 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
         String timeStamp = new SimpleDateFormat("yyyyHHdd_HHmmss").format(new Date());
         File mediaFile;
         if (type == 1) {
-            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_OWNER" +
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator + "IMG_PLACES" +
                     "" + timeStamp + ".png");
         } else {
             return null;
@@ -308,8 +278,6 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
 
         return mediaFile;
     }
-
-    String realPath = "";
 
     @Override
     @SuppressLint("NewApi")
@@ -333,9 +301,11 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
             setImageBitmap(mBitmap);
         }
     }
+
     private void setImageBitmap(Bitmap bm) {
-        image_restaurant_product.setImageBitmap(bm);
+        image_add_places.setImageBitmap(bm);
     }
+
     private void execMultipartPost() throws Exception {
         File file = new File(realPath);
         final String contentType = file.toURL().openConnection().getContentType();
@@ -353,11 +323,12 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
                         RequestBody requestBody = new MultipartBody.Builder()
                                 .setType(MultipartBody.FORM)
                                 .addFormDataPart("token", sp.getToken())
+                                .addFormDataPart("id", id_places)
                                 .addFormDataPart("photo", filename + ".jpg", fileBody)
                                 .build();
 
                         Request request = new Request.Builder()
-                                .url(ApiURL.URL_REGISTER_OWNER)
+                                .url(ApiURL.URL_PLACES_UPDATE)
                                 .post(requestBody)
                                 .build();
 
@@ -396,9 +367,57 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
                     }
                 });
     }
-    public class RegisterOwnerPlace extends AsyncTask<String, Void, String> {
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.image_add_places:
+                openFileChooserDialog();
+                break;
+            case R.id.btn_registerplaces2:
+                String token = sp.getToken();
+                String display_name_add = ed_display_name.getText().toString().trim();
+                String description_add = ed_description.getText().toString().trim();
+                String address_add = ed_address.getText().toString().trim();
+                String phone_number_add = ed_phone_number.getText().toString().trim();
+                String email_add = ed_email.getText().toString().trim();
+                String price_limit_add = ed_price_limit.getText().toString().trim();
+                String time_open_add = ed_time_open.getText().toString().trim();
+                String time_close_add = ed_time_close.getText().toString().trim();
+                String wifi_password_add = ed_wifi_password.getText().toString().trim();
+                if (display_name_add.length() == 0) {
+                    ed_display_name.setError(getString(R.string.error_message_name));
+                    ed_display_name.requestFocus();
+                } else if (description_add.length() == 0) {
+                    ed_description.setError(getString(R.string.error_message_description));
+                    ed_description.requestFocus();
+                } else if (address_add.length() == 0) {
+                    ed_address.setError(getString(R.string.error_message_description));
+                    ed_address.requestFocus();
+                } else if (phone_number_add.length() == 0) {
+                    ed_phone_number.setError(getString(R.string.error_message_description));
+                    ed_phone_number.requestFocus();
+                } else if (!EMAIL_ADDRESS_PATTERN.matcher(email_add).matches()) {
+                    Toasty.error(EditplaceActivity.this, getString(R.string.error_message_email), Toast.LENGTH_SHORT).show();
+                    ed_email.requestFocus();
+                } else {
+
+                    new EditPlaces().execute(token, display_name_add, description_add, address_add,
+                            phone_number_add, email_add, price_limit_add, time_open_add, time_close_add,
+                            wifi_password_add, latitude, longitude, String.valueOf(category_id), id_places);
+
+                }
+                break;
+            case R.id.img_location:
+                ed_address.setEnabled(true);
+                break;
+        }
+    }
+
+    public class EditPlaces extends AsyncTask<String, Void, String> {
         HttpHandler httpHandler;
-        String token, display_name, phone_number, address, category_id;
+        String token, display_name, description, address, phone_number, email, price_limit, time_open, time_close, wifi_password, latitude, longitude, category_id, id;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -409,18 +428,38 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
         protected String doInBackground(String... params) {
             token = params[0];
             display_name = params[1];
-            phone_number = params[2];
+            description = params[2];
             address = params[3];
-            category_id = params[4];
+            phone_number = params[4];
+            email = params[5];
+            price_limit = params[6];
+            time_open = params[7];
+            time_close = params[8];
+            wifi_password = params[9];
+            latitude = params[10];
+            longitude = params[11];
+            category_id = params[12];
+            id = params[13];
+
             try {
                 httpHandler = new HttpHandler();
-                URL url = new URL(ApiURL.URL_REGISTER_OWNER); // here is your URL path
+                URL url = new URL(ApiURL.URL_PLACES_UPDATE); // here is your URL path
                 JSONObject postDataParams = new JSONObject();
                 postDataParams.put("token", token);
                 postDataParams.put("display_name", display_name);
-                postDataParams.put("phone_number", phone_number);
+                postDataParams.put("description", description);
                 postDataParams.put("address", address);
+                postDataParams.put("phone_number", phone_number);
+                postDataParams.put("email", email);
+                postDataParams.put("price_limit", price_limit);
+                postDataParams.put("time_open", time_open);
+                postDataParams.put("time_close", time_close);
+                postDataParams.put("wifi_password", wifi_password);
+                postDataParams.put("latitude", latitude);
+                postDataParams.put("longitude", longitude);
                 postDataParams.put("category_id", category_id);
+                postDataParams.put("id", id);
+
                 Log.e("params", postDataParams.toString());
 
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -440,7 +479,7 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
                 os.close();
 
                 int responseCode = conn.getResponseCode();
-                if (responseCode == HttpsURLConnection.HTTP_CREATED) {
+                if (responseCode == HttpsURLConnection.HTTP_OK) {
                     BufferedReader in = new BufferedReader(new
                             InputStreamReader(
                             conn.getInputStream()));
@@ -467,13 +506,126 @@ public class RegisterOwnerActivity extends BaseActivity implements View.OnClickL
 
         @Override
         protected void onPostExecute(String result) {
+            super.onPostExecute(result);
             hideProgressDialog();
-            Log.d(TAG, result);
-            if (result.equals("200")) {
-                Toasty.success(RegisterOwnerActivity.this, "Đăng ký thành công! Chờ admin xét duyệt", Toast.LENGTH_SHORT).show();
-                finish();
+            try {
+                JSONObject root = new JSONObject(result);
+                int status = root.getInt("status");
+                Log.d("result status", result);
+                if (status == 200) {
+                    JSONObject b = root.getJSONObject("data");
+                    String id = b.getString("id");
+                    id_places = id;
+                    Log.e("id photo", id_places);
+                    try {
+                        execMultipartPost();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    Toasty.success(EditplaceActivity.this, "Sửa nhà hàng thành công", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(EditplaceActivity.this, PlacesOwnerActivity.class));
+                    finish();
+                } else {
+                    Toasty.error(EditplaceActivity.this, "Lỗi đăng ký!!", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+    }
+
+    public class GetPlaces extends AsyncTask<String, Void, String> {
+        String token;
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showProgressDialog();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            token = params[0];
+            HttpHandler sh = new HttpHandler();
+            // Making a request to url and getting response
+            String jsonStr = sh.makeServiceCall(ApiURL.URL_PLACE_GET + id_places + "?token=" + token);
+            Log.e(TAG, "Response from url edit: " + jsonStr);
+            return jsonStr;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            hideProgressDialog();
+            if (result != null) {
+                if (result.equals("405")) {
+                    Toasty.error(EditplaceActivity.this, "Loading error", Toast.LENGTH_SHORT).show();
+                } else {
+                    try {
+                        JSONObject root = new JSONObject(result);
+                        int status = root.getInt("status");
+                        if (status == 200) {
+                            JSONObject b = root.getJSONObject("data");
+                            String display_name = b.getString("display_name");
+                            String description = b.getString("description");
+                            String address = b.getString("address");
+                            String city = b.getString("city");
+                            String phone_number = b.getString("phone_number");
+                            String email = b.getString("email");
+                            Double latitude = b.getDouble("latitude");
+                            Double longitude = b.getDouble("longitude");
+                            int id = b.getInt("id");
+                            String url = ApiURL.URL_IMAGE + "?token=" + token + "&id=" + id;
+                            String price_limit = b.getString("price_limit");
+                            String time_open = b.getString("time_open");
+                            String time_close = b.getString("time_close");
+                            String wifi_password = b.getString("wifi_password");
+                            // tmp hash map for single contact
+                            Places places = new Places();
+                            // adding each child node to HashMap key => value
+
+                            places.setDescription(description);
+                            Log.d("img", url.toString());
+                            // adding contact to contact list
+
+                            places.setId(id);
+                            places.setDisplay_name(display_name);
+                            places.setAddress(address);
+                            places.setPhone_number(phone_number);
+                            places.setEmail(email);
+                            places.setLatitude(latitude);
+                            places.setLongitude(longitude);
+                            places.setPrice_limit(price_limit);
+                            places.setTime_open(time_open);
+                            places.setTime_close(time_close);
+                            places.setWifi_password(wifi_password);
+                            places.setPhoto(url);
+
+                            ed_display_name.setText(display_name);
+                            ed_description.setText(description);
+                            ed_address.setText(address);
+                            ed_phone_number.setText(phone_number);
+                            ed_email.setText(email);
+                            ed_price_limit.setText(price_limit);
+                            ed_time_open.setText(time_close);
+                            ed_time_close.setText(time_close);
+                            ed_wifi_password.setText(wifi_password);
+                            Picasso.with(EditplaceActivity.this)
+                                    .load(places.getPhoto())
+                                    .placeholder(R.drawable.bglogin5)
+                                    .error(R.drawable.bglogin5)
+                                    .into(image_add_places);
+
+
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
             } else {
-                Toasty.error(RegisterOwnerActivity.this, "Lỗi đăng ký!!", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "Error");
             }
         }
     }

@@ -74,6 +74,10 @@
     <string name="error_message_sex">Bạn chưa chọn giới tính</string>
     <string name="error_message_fullname">Bạn chưa nhập tên</string>
     <string name="error_message_email">Chưa đúng dạng Email!!</string>
+    <string name="error_message_name">Bạn chưa nhập tên nhà hàng!!</string>
+    <string name="error_message_description">Bạn chưa nhập miêu tả!!</string>
+    <string name="error_message_address">Bạn chưa địa chỉ!!</string>
+    <string name="error_message_phone">Bạn chưa số điện thoại!!</string>
 
     <!--menu_takepicture-->
     <string name="choose_image">Chọn ảnh từ máy</string>

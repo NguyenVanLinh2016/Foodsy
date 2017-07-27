@@ -41,4 +41,14 @@ public class ApiURL {
     //OwnerRegisterFragment
     public static final String URL_GET_OWNER = "https://foodsyapp.herokuapp.com/api/user/admin/owner";
     public static final String URL_ACCEPTION_OWNER = "https://foodsyapp.herokuapp.com/api/user/admin/acception";
+    //Register Places
+    public static final String URL_PLACES = "https://foodsyapp.herokuapp.com/api/place/store";
+    public static final String URL_PLACES_UPDATE = "https://foodsyapp.herokuapp.com/api/place/update";
+    public static final String url_category = "https://foodsyapp.herokuapp.com/api/category/place";
+    public static final String URL_PLACE_GET = "https://foodsyapp.herokuapp.com/api/place/";
+
+    //Owner activity
+    public static final String URL_PLACE_OWNER = "https://foodsyapp.herokuapp.com/api/user/places";
+    public static final String URL_PLACE_CATEGORY_PRODUCT= "https://foodsyapp.herokuapp.com/api/category/product/store";
+
 }

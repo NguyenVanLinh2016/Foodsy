@@ -1,5 +1,6 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -54,6 +55,15 @@
             android:layout_height="wrap_content"
             android:layout_weight="2">
 
+            <TextView
+                android:id="@+id/tv_id"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:text="TextView"
+                android:visibility="invisible"
+                tools:layout_editor_absoluteX="-8dp"
+                tools:layout_editor_absoluteY="92dp" />
+
             <Button
                 android:id="@+id/txtAgo"
                 android:layout_width="match_parent"
@@ -67,4 +77,5 @@
                 android:textSize="13dip" />
         </FrameLayout>
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
