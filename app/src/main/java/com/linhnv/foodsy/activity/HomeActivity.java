@@ -276,11 +276,12 @@ public class HomeActivity extends AppCompatActivity
                 break;
         }
         if (id == R.id.nav_home) {
+            viewPager.setCurrentItem(0);
             // Handle the camera action
         } else if (id == R.id.nav_bookmark) {
-
+            viewPager.setCurrentItem(1);
         } else if (id == R.id.nav_location) {
-
+            viewPager.setCurrentItem(3);
         } else if (id == R.id.nav_setting) {
 
         } else if (id == R.id.nav_share) {
@@ -288,7 +289,11 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.nav_register_admin) {
-
+            startActivity(new Intent(HomeActivity.this, RegisterOwnerActivity.class));
+        } else if (id == R.id.nav_owner) {
+            startActivity(new Intent(HomeActivity.this, PlacesOwnerActivity.class));
+        } else if (id == R.id.nav_admin) {
+            startActivity(new Intent(HomeActivity.this, AdminActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

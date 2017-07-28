@@ -47,7 +47,7 @@
                 android:visible="true" />
             <item
                 android:id="@+id/log_out"
-                android:icon="@drawable/ic_face_black_24dp"
+                android:icon="@drawable/logout"
                 android:title="Đăng xuất"
                 android:visible="true" />
         </menu>

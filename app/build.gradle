@@ -26,6 +26,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile('com.thomashaertel:multispinner:0.1.1@aar') {
+    }
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
@@ -44,7 +46,5 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.sharish:ShimmerRecyclerView:v1.0.1'
     compile 'pl.droidsonroids.gif:android-gif-drawable:1.2.7'
-    compile('com.thomashaertel:multispinner:0.1.1@aar') {
-    }
     testCompile 'junit:junit:4.12'
 }

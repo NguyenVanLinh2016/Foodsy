@@ -51,4 +51,8 @@ public class ApiURL {
     public static final String URL_PLACE_OWNER = "https://foodsyapp.herokuapp.com/api/user/places";
     public static final String URL_PLACE_CATEGORY_PRODUCT= "https://foodsyapp.herokuapp.com/api/category/product/store";
 
+
+    public static final String URL_ADD_PRODUCT= "https://foodsyapp.herokuapp.com/api/category/product/store";
+
+
 }
